@@ -18,8 +18,8 @@ metadata = {
 }
 
 
-# with open('labware/wl_40_wellplate_500ul.json') as labware_file:
-#     rack_40_500ul = json.load(labware_file)
+with open('WL_labware/wl_40_wellplate_500ul.json') as labware_file:
+     rack_40_500ul = json.load(labware_file)
 
 
 
@@ -38,8 +38,7 @@ def run(protocol: protocol_api.ProtocolContext):
     plate = protocol.load_labware('opentrons_6_tuberack_falcon_50ml_conical', '2')
     tiprack = protocol.load_labware('opentrons_96_tiprack_1000ul', '1')
     rack_500ul = protocol.load_labware('opentrons_24_tuberack_nest_1.5ml_screwcap', '3')
-
-
+    rack_prueba = protocol.load_labware_from_definition(rack_40_500ul, 4)
 
     # pipettes
     left_pipette = protocol.load_instrument(
