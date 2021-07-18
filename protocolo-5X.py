@@ -22,6 +22,7 @@ with open('WL_labware/wl_40_wellplate_500ul.json') as labware_file:
      rack_40_500ul = json.load(labware_file)
 
 
+num_racks = 9
 
 
 
@@ -35,10 +36,18 @@ def run(protocol: protocol_api.ProtocolContext):
     
 
     # labware
-    plate = protocol.load_labware('opentrons_6_tuberack_falcon_50ml_conical', '2')
-    tiprack = protocol.load_labware('opentrons_96_tiprack_1000ul', '1')
-    rack_500ul = protocol.load_labware('opentrons_24_tuberack_nest_1.5ml_screwcap', '3')
-    rack_prueba = protocol.load_labware_from_definition(rack_40_500ul, 4)
+    tiprack = protocol.load_labware('opentrons_96_tiprack_1000ul', 10)
+    plate = protocol.load_labware('opentrons_6_tuberack_falcon_50ml_conical', 11)
+
+
+    # Los racks se cargan en una lista.
+    # La cantidad de racks cargados depende del numero indicado anteriormente
+
+    racks_500ul = []
+
+    for i in range(1, num_racks+1):
+        racks_500ul.append(protocol.load_labware_from_definition(rack_40_500ul, i))
+    
 
     # pipettes
     left_pipette = protocol.load_instrument(
@@ -49,24 +58,26 @@ def run(protocol: protocol_api.ProtocolContext):
     left_pipette.well_bottom_clearance.aspirate = 84
 
 
-    c = 0
+    for i in range(num_racks):
 
-    for well in rack_500ul.wells()[::2]:
-        # De a dos wells a la vez
+        c = 0
+
+        for well in racks_500ul[i].wells()[::2]:
+            # De a dos wells a la vez
 
 
 
-        left_pipette.aspirate(1000, plate['A1'])
-        left_pipette.dispense(440, rack_500ul.wells()[c].bottom(15))
-        left_pipette.dispense(440, rack_500ul.wells()[c+1].bottom(15))
-        left_pipette.dispense(120, plate['A1'].top() )
+            left_pipette.aspirate(1000, plate['A1'])
+            left_pipette.dispense(440, racks_500ul[i].wells()[c].bottom(15))
+            left_pipette.dispense(440, racks_500ul[i].wells()[c+1].bottom(15))
+            left_pipette.dispense(120, plate['A1'].top() )
 
-        if left_pipette.well_bottom_clearance.aspirate > 18:
-            left_pipette.well_bottom_clearance.aspirate -= 1.65
-        else:
-            left_pipette.well_bottom_clearance.aspirate = .5
+            if left_pipette.well_bottom_clearance.aspirate > 18:
+                left_pipette.well_bottom_clearance.aspirate -= 1.65
+            else:
+                left_pipette.well_bottom_clearance.aspirate = .5
 
-        c += 2
+            c += 2
 
         # A los 18 mm se va a .5. En la documentacion hay acalara que hay que tener
         # cuidado con que tome valores negativos pq se estrella el tip.
