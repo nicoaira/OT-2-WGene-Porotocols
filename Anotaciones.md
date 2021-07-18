@@ -18,11 +18,11 @@
 >Blow liquid out of the tip.
 >If dispense is used to completely empty a pipette, usually a small amount of liquid will remain in the tip. This method moves the plunger past its usual stops to fully remove any remaining liquid from the tip. Regardless of how much liquid was in the tip when this function is called, after it is done the tip will be empty.
 
->*property **current_volume**
+>* property **current_volume**
 >
 >The current amount of liquid, in microliters, held in the pipette.
 
->*property **default_speed**
+>* property **default_speed**
 >
 >The speed at which the robot’s gantry moves.
 >By default, 400 mm/s. Changing this value will change the speed of the pipette when moving between labware. In addition to changing the default, the speed of individual motions can be changed with the speed argument to InstrumentContext.move_to().
@@ -33,7 +33,7 @@
 
 
 
->*property **flow_rate**
+>* property **flow_rate**
 >
 >The speeds (in uL/s) configured for the pipette.
 >This is an object with attributes aspirate, dispense, and blow_out holding the flow rates for the corresponding operation.
@@ -50,7 +50,7 @@
 >The tip to pick up can be manually specified with the location argument. The location argument can be specified in several ways:
 
 
->*property **starting_tip**
+>* property **starting_tip**
 >
 >The starting tip from which the pipette pick up
 
