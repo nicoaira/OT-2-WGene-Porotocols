@@ -1,12 +1,19 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[19]:
-
-
 from opentrons import protocol_api
 import json
 import opentrons.execute
+import configparser
+
+# Info de configuracion
+
+config = configparser.ConfigParser()
+
+config.read('GUI/config.ini')
+rvo = config.get('REACTIVO', 'reactivo')
+num_racks = int(config.get('NUM_RACKS', 'num_racks'))
+vol_falcons = {}
+for i in range(1,7):
+    vol_falcons[i] = config.get('VOL_FALCONS', str(i))
+
 
 
 # metadata
@@ -22,7 +29,6 @@ with open('WL_labware/wl_40_wellplate_500ul.json') as labware_file:
      rack_40_500ul = json.load(labware_file)
 
 
-num_racks = 9
 
 
 
