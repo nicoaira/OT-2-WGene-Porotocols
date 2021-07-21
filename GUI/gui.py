@@ -43,7 +43,16 @@ def guardar():
 	config['REACTIVO'] = {'Reactivo' : rvo.get()}
 	config['NUM_RACKS'] = {'num_racks' : menu_num_racks.get()}
 	config['NUM_FALCONS'] = {'num_falcons' : menu_num_falcon.get()}
-	config['VOL_FALCONS'] = {str(index+1):v.get() for (index, v) in enumerate(falcons)}
+
+	falcons_dict = {}
+	a = 0
+	for i in range(3):
+		for j in string.ascii_uppercase[:2]:
+			falcons_dict[j+str(i+1)] = falcons[a].get()
+			a += 1
+
+	# config['VOL_FALCONS'] = {str(index+1):v.get() for (index, v) in enumerate(falcons)}
+	config['VOL_FALCONS'] = falcons_dict
 
 	with open('config.ini', 'w') as configfile:
 		config.write(configfile)
