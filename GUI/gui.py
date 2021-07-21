@@ -1,9 +1,21 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import showinfo
+import configparser
+import string
+
+
+
+
+###############################################
 
 root = tk.Tk()
 root.title('Protocolo - WGene SARS-CoV-2 RT Detection')
+
+################## VARIABLES ##################
+
+
+rvo = tk.StringVar()
 
 
 ################## DEFINICION DE FUNCIONES ##################
@@ -22,6 +34,22 @@ def seleccion_num_falcons(event):
 			falcons[i].config(state = 'disabled')
 
 
+def saludar():
+	print('holas')
+
+def guardar():
+	config = configparser.ConfigParser()
+
+	config['REACTIVO'] = {'Reactivo' : rvo.get()}
+	config['NUM_RACKS'] = {'num_racks' : menu_num_racks.get()}
+	config['NUM_FALCONS'] = {'num_falcons' : menu_num_falcon.get()}
+	config['VOL_FALCONS'] = {str(index+1):v.get() for (index, v) in enumerate(falcons)}
+
+	with open('config.ini', 'w') as configfile:
+		config.write(configfile)
+
+
+
 ################## INICIALIZACION DE FRAMES ##################
 
 
@@ -29,25 +57,27 @@ frame1 = tk.Frame()
 frame2 = tk.Frame()
 frame3 = tk.Frame(relief  = tk.GROOVE, borderwidth=3, pady=20)
 sub_frame3 = tk.Frame(master = frame3)
-
+frame4 = tk.Frame()
 
 
 ################## SELECCION DE REACTIVO ##################
 
-label_rvo = tk.Label(master = frame1, text = 'Reactivo a alicuotar:')
+label_rvo = tk.Label(frame1, text = 'Reactivo a alicuotar:')
 label_rvo.pack()
 
 rb_rvo1 = tk.Radiobutton(
 	master = frame1,
 	text = 'Master Mix 5x',
-	value = 1)
+	value = '5x',
+	variable = rvo)
 
 rb_rvo1.pack(padx = 3, pady= 2)
 
 rb_rvo2 = tk.Radiobutton(
 	master = frame1,
 	text = 'RT Mix 40x',
-	value = 2)
+	value = '40x',
+	variable = rvo)
 
 rb_rvo2.pack(padx = 3, pady= 2)
 
@@ -94,16 +124,18 @@ for i in range(3):
 		elif j == 2:
 			row = 'B'
 
-		falcon_label = tk.Label(sub_frame3, text = row + str(i))
+		falcon_label = tk.Label(sub_frame3, text = row + str(i+1))
 		falcon_label.grid(row = j, column = i, padx = 10, pady = 3)
 
 
 
 falcons = []
 
+
 for i in range(3):
 
 	for j in range(1 ,5 ,2):
+
 
 		volfalcon = tk.Entry(sub_frame3, width = 4, state = 'disabled')
 		volfalcon.insert(0,'44')
@@ -121,6 +153,16 @@ sub_frame3.pack()
 frame1.grid(row = 1, column = 1, padx = 10, pady = 10)
 frame2.grid(row = 2, column = 1, padx = 10, pady = 10)
 frame3.grid(row = 3, column = 1, padx = 10, pady = 10)
+frame4.grid(row = 4, column = 1, padx = 10, pady = 10)
+
+
+################## GUARANDO LA CONFIGURACION ##################
+
+
+
+
+boton_guardar = tk.Button(frame4, text ="Guardar", command = guardar)
+boton_guardar.pack()
 
 
 root.resizable(False, False)
