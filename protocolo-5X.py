@@ -10,10 +10,12 @@ config = configparser.ConfigParser()
 config.read('GUI/config.ini')
 rvo = config.get('REACTIVO', 'reactivo')
 num_racks = int(config.get('NUM_RACKS', 'num_racks'))
-vol_falcons = {}
-for i in range(1,7):
-    vol_falcons[i] = config.get('VOL_FALCONS', str(i))
 
+falcons = dict(config.items('VOL_FALCONS'))
+
+# Procesamos el diccionario para que sea mas facil correrlo
+
+falcons = {k.upper():int(v) for (k, v) in falcons.items()}
 
 
 # metadata
@@ -64,14 +66,13 @@ def run(protocol: protocol_api.ProtocolContext):
     left_pipette.well_bottom_clearance.aspirate = 84
 
 
+
     for i in range(num_racks):
 
         c = 0
 
         for well in racks_500ul[i].wells()[::2]:
             # De a dos wells a la vez
-
-
 
             left_pipette.aspirate(1000, plate['A1'])
             left_pipette.dispense(440, racks_500ul[i].wells()[c].bottom(15))
