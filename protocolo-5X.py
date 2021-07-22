@@ -14,9 +14,12 @@ num_racks = int(config.get('NUM_RACKS', 'num_racks'))
 falcons = dict(config.items('VOL_FALCONS'))
 
 # Procesamos el diccionario para que sea mas facil correrlo
+# Pasamos el volumen de los falcons a uL
 
-falcons = {k.upper():int(v) for (k, v) in falcons.items()}
+falcons = {k.upper():int(v)*1000 for (k, v) in falcons.items()}
 
+for k,v in falcons.items():
+    print(k, '>>',v)
 
 # metadata
 metadata = {
@@ -67,24 +70,52 @@ def run(protocol: protocol_api.ProtocolContext):
 
 
 
+
+
     for i in range(num_racks):
 
         c = 0
 
-        for well in racks_500ul[i].wells()[::2]:
-            # De a dos wells a la vez
+        wells_per_rack = len(racks_500ul[i].wells())  # para el rack nuestro seria 40
 
-            left_pipette.aspirate(1000, plate['A1'])
-            left_pipette.dispense(440, racks_500ul[i].wells()[c].bottom(15))
-            left_pipette.dispense(440, racks_500ul[i].wells()[c+1].bottom(15))
-            left_pipette.dispense(120, plate['A1'].top() )
+        for falcon, vol in falcons.items():
 
-            if left_pipette.well_bottom_clearance.aspirate > 18:
-                left_pipette.well_bottom_clearance.aspirate -= 1.65
+            print('FALCON:', falcon, '- VOLUMEN:', vol)
+
+            # Se busca el primer falcon que tenga volumen
+            if vol < 1100:
+                continue
+                # Si el volumen es menor a 1100 uL busca el siguiente falcon
             else:
-                left_pipette.well_bottom_clearance.aspirate = .5
+                pass
 
-            c += 2
+
+            while c < wells_per_rack:
+            # Hay que agregar algo para corroborar que se llene el ultimo well
+            # Ya que si c = wells_per_rack se va a romper el loop
+
+                # De a dos wells a la vez
+                left_pipette.aspirate(1000, plate[falcon])
+                left_pipette.dispense(440, racks_500ul[i].wells()[c].bottom(15))
+                left_pipette.dispense(440, racks_500ul[i].wells()[c+1].bottom(15))
+                left_pipette.dispense(120, plate[falcon].top() )
+
+                # Se descuenta el volumen usado del falcon
+                falcons[falcon] -= 880
+
+
+                if left_pipette.well_bottom_clearance.aspirate > 18:
+                    left_pipette.well_bottom_clearance.aspirate -= 1.65
+                else:
+                    left_pipette.well_bottom_clearance.aspirate = .5
+
+                c += 2
+
+                # Chequeo del volumen del falcon antes de repetir cada paso
+                if falcons[falcon] < 1100:
+                    break
+                else:
+                    continue
 
         # A los 18 mm se va a .5. En la documentacion hay acalara que hay que tener
         # cuidado con que tome valores negativos pq se estrella el tip.
