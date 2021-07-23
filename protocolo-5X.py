@@ -5,7 +5,7 @@ import configparser
 
 # Info de configuracion
 
-config = configparser.ConfigParser()
+confaig = configparser.ConfigPrser()
 
 config.read('GUI/config.ini')
 rvo = config.get('REACTIVO', 'reactivo')
@@ -66,10 +66,6 @@ def run(protocol: protocol_api.ProtocolContext):
 
     # commands
     left_pipette.pick_up_tip()
-    left_pipette.well_bottom_clearance.aspirate = 84
-
-
-
 
 
     for i in range(num_racks):
@@ -90,21 +86,30 @@ def run(protocol: protocol_api.ProtocolContext):
                 pass
 
 
+            # Configuracion de la altura inicial del tip
+            # Toma como punto limite el cono inferior del falcon (aprox 3750uL)
+            # A partir de ahi toma desde el fondo
+
+            if vol > 3750:
+                left_pipette.well_bottom_clearance.aspirate = 19.1 + ((vol-3750)/1000) * 1.86
+            else:
+                left_pipette.well_bottom_clearance.aspirate = .5
+
             while c < wells_per_rack:
             # Hay que agregar algo para corroborar que se llene el ultimo well
             # Ya que si c = wells_per_rack se va a romper el loop
 
                 # De a dos wells a la vez
                 left_pipette.aspirate(1000, plate[falcon])
-                left_pipette.dispense(440, racks_500ul[i].wells()[c].bottom(15))
-                left_pipette.dispense(440, racks_500ul[i].wells()[c+1].bottom(15))
+                left_pipette.dispense(440, racks_500ul[i].wells()[c].bottom(10))
+                left_pipette.dispense(440, racks_500ul[i].wells()[c+1].bottom(10))
                 left_pipette.dispense(120, plate[falcon].top() )
 
                 # Se descuenta el volumen usado del falcon
                 falcons[falcon] -= 880
 
 
-                if left_pipette.well_bottom_clearance.aspirate > 18:
+                if left_pipette.well_bottom_clearance.aspirate > 19.1:
                     left_pipette.well_bottom_clearance.aspirate -= 1.65
                 else:
                     left_pipette.well_bottom_clearance.aspirate = .5
