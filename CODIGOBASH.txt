@@ -1,0 +1,21 @@
+C:/Users/user/Desktop/OT-up/OT-2-WGene-Porotocols/GUI
+
+# scp -i ot2_ssh_key root@169.254.77.218 C:/Users/user/Desktop/OT-up/OT-2-WGene-Porotocols/GUI/config.ini
+
+~ alt +126
+
+scp -i ot2_ssh_key root@169.254.77.218:/archivo/ C:/Users/user/Desktop/OT-up/OT-2-WGene-Porotocols/GUI/config.ini
+
+
+scp -i ot2_ssh_key /C:/Users/user/Desktop/OT-up/OT-2-WGene-Porotocols/GUI/config.ini root@169.254.77.218:/archivo/
+
+C:\Users\user\Desktop\OT-up\OT-2-WGene-Porotocols
+
+scp -i ot2_ssh_key C:\Users\user\Desktop\OT-up\OT-2-WGene-Porotocols\config.ini root@169.254.77.218:\archivo\c
+
+
+
+ESTE FUNCIONO
+
+scp -i ot2_ssh_key C:/Users/user/Desktop/OT-up/OT-2-WGene-Porotocols/GUI/config.ini root@169.254.77.218:/data/user_storage
+
