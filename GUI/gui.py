@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter.messagebox import showinfo
 import configparser
 import string
+import subprocess
 
 
 
@@ -16,6 +17,7 @@ root.title('Protocolo - WGene SARS-CoV-2 RT Detection')
 
 
 rvo = tk.StringVar()
+OT2_IP = "169.254.77.218"
 
 
 ################## DEFINICION DE FUNCIONES ##################
@@ -38,6 +40,7 @@ def saludar():
 	print('holas')
 
 def guardar():
+
 	config = configparser.ConfigParser()
 
 	config['REACTIVO'] = {'Reactivo' : rvo.get()}
@@ -57,6 +60,16 @@ def guardar():
 	with open('config.ini', 'w') as configfile:
 		config.write(configfile)
 
+	#### Carga en OT-2
+
+	upload_script = ["scp",
+					 "-i",
+					 "ot2_ssh_key",
+					 "../config.ini",
+					 "root@169.254.77.218:/data/user_storage"]
+
+	upload = subprocess.run(upload_script, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	upload.wait(10)
 
 
 ################## INICIALIZACION DE FRAMES ##################
