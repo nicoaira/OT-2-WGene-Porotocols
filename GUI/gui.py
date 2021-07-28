@@ -16,6 +16,7 @@ root.title('Protocolo - WGene SARS-CoV-2 RT Detection')
 
 
 rvo = tk.StringVar()
+first_tip = tk.StringVar()
 
 
 ################## DEFINICION DE FUNCIONES ##################
@@ -43,6 +44,9 @@ def guardar():
 	config['REACTIVO'] = {'Reactivo' : rvo.get()}
 	config['NUM_RACKS'] = {'num_racks' : menu_num_racks.get()}
 	config['NUM_FALCONS'] = {'num_falcons' : menu_num_falcon.get()}
+	config['FIRST_TIP'] = {'tip' : first_tip.get()}
+	
+
 
 	falcons_dict = {}
 	a = 0
@@ -67,6 +71,7 @@ frame2 = tk.Frame()
 frame3 = tk.Frame(relief  = tk.GROOVE, borderwidth=3, pady=20)
 sub_frame3 = tk.Frame(master = frame3)
 frame4 = tk.Frame()
+frame5 = tk.Frame()
 
 
 ################## SELECCION DE REACTIVO ##################
@@ -156,6 +161,28 @@ for i in range(3):
 sub_frame3.pack()
 
 
+################## SELECCION DEL PRIMER TIP ##################
+
+label_tips = tk.Label(frame5, text = 'Seleccione el primer tip disponible:')
+label_tips.grid(row = 1, column = 1, columnspan = 12, padx = 10, pady = 10)
+
+tips_list = []
+for i in range(12):
+	for j in range(8):
+
+		tip = tk.Radiobutton(
+			master = frame5,
+			value = string.ascii_uppercase[j]+str(i+1),
+			variable = first_tip)
+
+		tips_list.append(tip)
+
+		tip.grid(row = 2 + j, column = 1 + i, padx = 10, pady = 10)
+
+
+
+
+
 ################## EMPAQUETADO DE LOS FRAMES ##################
 
 
@@ -163,6 +190,8 @@ frame1.grid(row = 1, column = 1, padx = 10, pady = 10)
 frame2.grid(row = 2, column = 1, padx = 10, pady = 10)
 frame3.grid(row = 3, column = 1, padx = 10, pady = 10)
 frame4.grid(row = 4, column = 1, padx = 10, pady = 10)
+frame5.grid(row = 5, column = 1, padx = 10, pady = 10)
+
 
 
 ################## GUARANDO LA CONFIGURACION ##################
