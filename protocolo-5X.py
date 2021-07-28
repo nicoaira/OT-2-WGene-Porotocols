@@ -5,11 +5,14 @@ import configparser
 import os
 
 
+cwd = os.getcwd()
+
+
 # Info de configuracion
 
 config = configparser.ConfigParser()
 
-config.read('/data/user_storage/config.ini')
+config.read('GUI/config.ini')
 rvo = config.get('REACTIVO', 'reactivo')
 num_racks = int(config.get('NUM_RACKS', 'num_racks'))
 
@@ -32,6 +35,12 @@ metadata = {
 }
 
 
+with open('WL_labware/wl_40_wellplate_500ul.json') as labware_file:
+     rack_40_500ul = json.load(labware_file)
+
+
+
+
 
 # protocol run function
 def run(protocol: protocol_api.ProtocolContext):
@@ -49,11 +58,12 @@ def run(protocol: protocol_api.ProtocolContext):
 
     # Los racks se cargan en una lista.
     # La cantidad de racks cargados depende del numero indicado anteriormente
+
     racks_500ul = []
 
     for i in range(1, num_racks+1):
-        racks_500ul.append(protocol.load_labware('wienerlab_40_wellplate_500ul', i))
-
+        racks_500ul.append(protocol.load_labware_from_definition(rack_40_500ul, i))
+    
 
     # pipettes
     left_pipette = protocol.load_instrument(
