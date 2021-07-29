@@ -10,7 +10,7 @@ import math
 
 config = configparser.ConfigParser()
 
-config.read('GUI/config.ini')
+config.read('config.ini')
 rvo = config.get('REACTIVO', 'reactivo')
 num_racks = int(config.get('NUM_RACKS', 'num_racks'))
 falcons = dict(config.items('VOL_FALCONS'))
@@ -38,7 +38,7 @@ elif rvo == 'nfw':
     vol_pipeta = 1000
     vol_dispensar = 1850
 
-elif rvo == 'PC':
+elif rvo == 'pc':
     vol_pipeta = 200
     vol_dispensar = 54
 
@@ -46,9 +46,9 @@ elif rvo == 'PC':
 
 # metadata
 metadata = {
-    'protocolName': 'Prueba3',
-    'author': 'Nico',
-    'description': 'Protocolo de prueba escrito en python',
+    'protocolName': 'Porotocolo - WGener SARS-CoV-2 RT Detection',
+    'author': 'CIBIO-WL (Nicolas Aira y Mariano Depiante)',
+    'description': 'Protocolo para el alicuotado de los 4 semielavorados del kit',
     'apiLevel': '2.10'
 }
 
@@ -67,10 +67,10 @@ def run(protocol: protocol_api.ProtocolContext):
 
     # labware
     if rvo == '5x' or rvo == 'nfw':
-        tiprack = protocol.load_labware('opentrons_96_tiprack_1000ul', 10)
+        tiprack = protocol.load_labware('opentrons_96_filtertiprack_1000ul', 10)
 
-    elif rvo == '40x' or rvo == 'PC':
-        tiprack = protocol.load_labware('opentrons_96_tiprack_200ul', 10)
+    elif rvo == '40x' or rvo == 'pc':
+        tiprack = protocol.load_labware('opentrons_96_filtertiprack_200ul', 10)
 
     plate = protocol.load_labware('opentrons_6_tuberack_falcon_50ml_conical', 11)
 
@@ -83,10 +83,10 @@ def run(protocol: protocol_api.ProtocolContext):
     for i in range(1, num_racks+1):
 
         if rvo == 'nfw':
-            racks.append(protocol.load_labware('wienerlab_40_wellplate_2000ul', i))
+            racks.append(protocol.load_labware('wienerlab_40_reservoir_2000ul', i))
 
-        elif rvo == '5x' or rvo == '40x' or rvo == 'PC':
-           racks.append(protocol.load_labware('wienerlab_40_wellplate_500ul', i)) 
+        elif rvo == '5x' or rvo == '40x' or rvo == 'pc':
+           racks.append(protocol.load_labware('wienerlab_40_reservoir_500ul', i))
     
 
     # pipettes
@@ -94,7 +94,7 @@ def run(protocol: protocol_api.ProtocolContext):
         pipette = protocol.load_instrument(
             'p1000_single', 'left', tip_racks=[tiprack])
 
-    elif rvo == '40x' or rvo == 'PC':
+    elif rvo == '40x' or rvo == 'pc':
         pipette = protocol.load_instrument(
             'p300_single', 'right', tip_racks=[tiprack])
 
@@ -143,8 +143,11 @@ def run(protocol: protocol_api.ProtocolContext):
                     for m in range(vol_pipeta//vol_dispensar):
 
                         # Chequea que c no genere un OutOfIndex
-                        if c < wells_per_rack:
+                        if c+m < wells_per_rack:
                             pipette.dispense(vol_dispensar, racks[i].wells()[c+m].bottom(10))
+                        else:
+                            pipette.blow_out(plate[falcon])
+                            break
 
 
                     pipette.dispense(vol_pipeta%vol_dispensar, plate[falcon].top() )
@@ -169,12 +172,11 @@ def run(protocol: protocol_api.ProtocolContext):
 
                     for m in range(pasos):
 
-                            pipette.dispense(vol_dispensar, racks[i].wells()[c].bottom(10))
+                            pipette.dispense(vol_dispensar/pasos, racks[i].wells()[c].bottom(10))
                             # Se descuenta el volumen usado del falcon
-                            falcons[falcon] -= vol_dispensar
                         
 
-                    pipette.dispense(vol_pipeta%vol_dispensar, plate[falcon].top() )
+                    pipette.dispense(vol_pipeta%(vol_dispensar/pasos), plate[falcon].top() )
 
 
                     # Volumen utilizado en uL
@@ -182,6 +184,7 @@ def run(protocol: protocol_api.ProtocolContext):
 
                     # Se descuenta el volumen usado del falcon
                     falcons[falcon] -= vol_usado
+                    print('Volumen en el falcon', falcon, '>>', falcons[falcon])
 
                     c += 1
 
@@ -195,7 +198,7 @@ def run(protocol: protocol_api.ProtocolContext):
 
 
                 # Chequeo del volumen del falcon antes de repetir cada paso
-                if falcons[falcon] < 1100:
+                if falcons[falcon] < 200 + vol_dispensar*1.1:
                     break
                 else:
                     continue
