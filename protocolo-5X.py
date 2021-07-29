@@ -78,15 +78,15 @@ def run(protocol: protocol_api.ProtocolContext):
     # Los racks se cargan en una lista.
     # La cantidad de racks cargados depende del numero indicado anteriormente
 
-    racks_500ul = []
+    racks = []
 
     for i in range(1, num_racks+1):
 
         if rvo == 'nfw':
-            racks_500ul.append(protocol.load_labware('wienerlab_40_wellplate_2000ul', i))
+            racks.append(protocol.load_labware('wienerlab_40_wellplate_2000ul', i))
 
         elif rvo == '5x' or rvo == '40x' or rvo == 'PC':
-           racks_500ul.append(protocol.load_labware('wienerlab_40_wellplate_500ul', i)) 
+           racks.append(protocol.load_labware('wienerlab_40_wellplate_500ul', i)) 
     
 
     # pipettes
@@ -109,7 +109,7 @@ def run(protocol: protocol_api.ProtocolContext):
 
         c = 0
 
-        wells_per_rack = len(racks_500ul[i].wells())  # para el rack nuestro seria 40
+        wells_per_rack = len(racks[i].wells())  # para el rack nuestro seria 40
 
         for falcon, vol in falcons.items():
 
@@ -131,16 +131,23 @@ def run(protocol: protocol_api.ProtocolContext):
                 pipette.well_bottom_clearance.aspirate = 19.1 + ((vol-3750)/1000) * 1.86
             else:
                 pipette.well_bottom_clearance.aspirate = .5
+                
 
             while c < wells_per_rack:
             # Hay que agregar algo para corroborar que se llene el ultimo well
             # Ya que si c = wells_per_rack se va a romper el loop
 
 
+
             if vol_pipeta >= vol_dispensar:
+
                 pipette.aspirate(vol_pipeta, plate[falcon])
+
                 for m in range(vol_pipeta//vol_dispensar):
-                    pipette.dispense(vol_dispensar, racks_500ul[i].wells()[c+m].bottom(10))
+
+                    # Chequea que c no genere un OutOfIndex
+                    if c < wells_per_rack:
+                        pipette.dispense(vol_dispensar, racks[i].wells()[c+m].bottom(10))
 
 
                 pipette.dispense(vol_pipeta%vol_dispensar, plate[falcon].top() )
@@ -162,11 +169,14 @@ def run(protocol: protocol_api.ProtocolContext):
                 pasos = math.ceil(vol_dispensar/vol_pipeta)
 
                 pipette.aspirate(vol_pipeta, plate[falcon])
-                for m in range(pasos):
-                    pipette.dispense(vol_dispensar, racks_500ul[i].wells()[c].bottom(10))
 
-                    # Se descuenta el volumen usado del falcon
-                    falcons[falcon] -= vol_dispensar   
+                for m in range(pasos):
+
+                        pipette.dispense(vol_dispensar, racks[i].wells()[c].bottom(10))
+                        # Se descuenta el volumen usado del falcon
+                        falcons[falcon] -= vol_dispensar
+                    else:
+                        break
 
                 pipette.dispense(vol_pipeta%vol_dispensar, plate[falcon].top() )
 
@@ -176,6 +186,8 @@ def run(protocol: protocol_api.ProtocolContext):
 
                 # Se descuenta el volumen usado del falcon
                 falcons[falcon] -= vol_usado
+
+                c += 1
 
 
 
