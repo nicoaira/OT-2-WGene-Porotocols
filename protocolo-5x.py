@@ -134,78 +134,74 @@ def run(protocol: protocol_api.ProtocolContext):
                 
 
             while c < wells_per_rack:
-            # Hay que agregar algo para corroborar que se llene el ultimo well
-            # Ya que si c = wells_per_rack se va a romper el loop
+
+
+                if vol_pipeta >= vol_dispensar:
+
+                    pipette.aspirate(vol_pipeta, plate[falcon])
+
+                    for m in range(vol_pipeta//vol_dispensar):
+
+                        # Chequea que c no genere un OutOfIndex
+                        if c < wells_per_rack:
+                            pipette.dispense(vol_dispensar, racks[i].wells()[c+m].bottom(10))
+
+
+                    pipette.dispense(vol_pipeta%vol_dispensar, plate[falcon].top() )
+
+
+                    # Volumen utilizado en uL
+                    vol_usado = vol_dispensar*(vol_pipeta//vol_dispensar)
+
+
+                    # Se descuenta el volumen usado del falcon
+                    falcons[falcon] -= vol_usado
+
+                    # Cantidad de wells que se llenan en cada paso
+                    c += vol_pipeta//vol_dispensar
 
 
 
-            if vol_pipeta >= vol_dispensar:
+                else:
+                    pasos = math.ceil(vol_dispensar/vol_pipeta)
 
-                pipette.aspirate(vol_pipeta, plate[falcon])
+                    pipette.aspirate(vol_pipeta, plate[falcon])
 
-                for m in range(vol_pipeta//vol_dispensar):
+                    for m in range(pasos):
 
-                    # Chequea que c no genere un OutOfIndex
-                    if c < wells_per_rack:
-                        pipette.dispense(vol_dispensar, racks[i].wells()[c+m].bottom(10))
+                            pipette.dispense(vol_dispensar, racks[i].wells()[c].bottom(10))
+                            # Se descuenta el volumen usado del falcon
+                            falcons[falcon] -= vol_dispensar
+                        
 
-
-                pipette.dispense(vol_pipeta%vol_dispensar, plate[falcon].top() )
-
-
-                # Volumen utilizado en uL
-                vol_usado = vol_dispensar*(vol_pipeta//vol_dispensar)
+                    pipette.dispense(vol_pipeta%vol_dispensar, plate[falcon].top() )
 
 
-                # Se descuenta el volumen usado del falcon
-                falcons[falcon] -= vol_usado
+                    # Volumen utilizado en uL
+                    vol_usado = vol_dispensar
 
-                # Cantidad de wells que se llenan en cada paso
-                c += vol_pipeta//vol_dispensar
+                    # Se descuenta el volumen usado del falcon
+                    falcons[falcon] -= vol_usado
 
-
-
-            else:
-                pasos = math.ceil(vol_dispensar/vol_pipeta)
-
-                pipette.aspirate(vol_pipeta, plate[falcon])
-
-                for m in range(pasos):
-
-                        pipette.dispense(vol_dispensar, racks[i].wells()[c].bottom(10))
-                        # Se descuenta el volumen usado del falcon
-                        falcons[falcon] -= vol_dispensar
-                    else:
-                        break
-
-                pipette.dispense(vol_pipeta%vol_dispensar, plate[falcon].top() )
-
-
-                # Volumen utilizado en uL
-                vol_usado = vol_dispensar
-
-                # Se descuenta el volumen usado del falcon
-                falcons[falcon] -= vol_usado
-
-                c += 1
+                    c += 1
 
 
 
 
-            if pipette.well_bottom_clearance.aspirate > 19.1:
-                pipette.well_bottom_clearance.aspirate -= 1.86 * vol_usado/1000
-            else:
-                pipette.well_bottom_clearance.aspirate = .5
+                if pipette.well_bottom_clearance.aspirate > 19.1:
+                    pipette.well_bottom_clearance.aspirate -= 1.86 * vol_usado/1000
+                else:
+                    pipette.well_bottom_clearance.aspirate = .5
 
 
-            # Chequeo del volumen del falcon antes de repetir cada paso
-            if falcons[falcon] < 1100:
-                break
-            else:
-                continue
+                # Chequeo del volumen del falcon antes de repetir cada paso
+                if falcons[falcon] < 1100:
+                    break
+                else:
+                    continue
 
-        # A los 18 mm se va a .5. En la documentacion hay acalara que hay que tener
-        # cuidado con que tome valores negativos pq se estrella el tip.
+            # A los 18 mm se va a .5. En la documentacion hay acalara que hay que tener
+            # cuidado con que tome valores negativos pq se estrella el tip.
 
     # pipette.drop_tip()
     pipette.return_tip()
