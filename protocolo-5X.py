@@ -53,10 +53,6 @@ metadata = {
 }
 
 
-with open('WL_labware/wl_40_wellplate_500ul.json') as labware_file:
-     rack_40_500ul = json.load(labware_file)
-
-
 
 
 
@@ -85,7 +81,12 @@ def run(protocol: protocol_api.ProtocolContext):
     racks_500ul = []
 
     for i in range(1, num_racks+1):
-        racks_500ul.append(protocol.load_labware_from_definition(rack_40_500ul, i))
+
+        if rvo == 'nfw':
+            racks_500ul.append(protocol.load_labware('wienerlab_40_wellplate_2000ul', i))
+
+        elif rvo == '5x' or rvo == '40x' or rvo == 'PC':
+           racks_500ul.append(protocol.load_labware('wienerlab_40_wellplate_500ul', i)) 
     
 
     # pipettes
