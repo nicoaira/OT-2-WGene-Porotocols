@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter.messagebox import showinfo
 import configparser
 import string
+import subprocess
 
 
 
@@ -17,6 +18,7 @@ root.title('Protocolo - WGene SARS-CoV-2 RT Detection')
 
 rvo = tk.StringVar()
 first_tip = tk.StringVar()
+OT2_IP = "169.254.77.218"
 
 
 ################## DEFINICION DE FUNCIONES ##################
@@ -33,9 +35,6 @@ def seleccion_num_falcons(event):
 		else:
 			falcons[i].delete(0,4)
 			falcons[i].config(state = 'disabled')
-
-
-
 
 def popup_select_tip():
 	first_tip = tk.StringVar()
@@ -87,30 +86,41 @@ def popup_select_tip():
 	popup.mainloop()
 
 
-
 def guardar():
+
 	config = configparser.ConfigParser()
 
 	config['REACTIVO'] = {'Reactivo' : rvo.get()}
 	config['NUM_RACKS'] = {'num_racks' : menu_num_racks.get()}
 	config['NUM_FALCONS'] = {'num_falcons' : menu_num_falcon.get()}
-	config['FIRST_TIP'] = {'tip' : entry_primer_tip.get()}
-	
+	config['FIRST_TIP'] = {'tip': entry_primer_tip.get()}
 
 
 	falcons_dict = {}
 	a = 0
 	for i in range(3):
 		for j in string.ascii_uppercase[:2]:
-			falcons_dict[j+str(i+1)] = falcons[a].get()
+			if falcons[a].get() != "":
+				falcons_dict[j+str(i+1)] = falcons[a].get()
+			else:
+				falcons_dict[j + str(i + 1)] = "0"
 			a += 1
 
-	# config['VOL_FALCONS'] = {str(index+1):v.get() for (index, v) in enumerate(falcons)}
 	config['VOL_FALCONS'] = falcons_dict
 
 	with open('config.ini', 'w') as configfile:
 		config.write(configfile)
 
+	#### Carga en OT-2
+
+	upload_script = ["scp",
+					 "-i",
+					 "ot2_ssh_key",
+					 "config.ini",
+					 "root@"+ OT2_IP +":/data/user_storage"]
+
+	upload = subprocess.run(upload_script, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	# upload.wait(10)
 
 
 ################## INICIALIZACION DE FRAMES ##################
@@ -146,6 +156,22 @@ rb_rvo2 = tk.Radiobutton(
 rb_rvo2.pack(padx = 3, pady= 2)
 
 
+rb_rvo3 = tk.Radiobutton(
+	master = frame1,
+	text = 'Nuclease Free Water',
+	value = 'nfw',
+	variable = rvo)
+
+rb_rvo3.pack(padx = 3, pady= 2)
+
+rb_rvo4 = tk.Radiobutton(
+	master = frame1,
+	text = 'Positive Control',
+	value = 'pc',
+	variable = rvo)
+
+rb_rvo4.pack(padx = 3, pady= 2)
+
 ################## CANTIDAD DE RACKS A USAR ##################
 
 
@@ -165,7 +191,6 @@ menu_num_racks.pack(padx = 10, pady = 10)
 
 label_falcons = tk.Label(frame3, text='Falcons a utilizar')
 label_falcons.pack(padx = 10)
-
 
 
 falcon_list = list(range(1,7))
@@ -192,7 +217,6 @@ for i in range(3):
 		falcon_label.grid(row = j, column = i, padx = 10, pady = 3)
 
 
-
 falcons = []
 
 
@@ -207,9 +231,7 @@ for i in range(3):
 		volfalcon.grid(row = j, column = i, padx = 10)
 
 
-
 sub_frame3.pack()
-
 
 ################## SELECCION DEL PRIMER TIP ##################
 
@@ -227,13 +249,10 @@ boton_select_tip = tk.Button(frame4, text ="Seleccionar", command = popup_select
 boton_select_tip.grid(row = 2, column = 2, padx = 10, pady = 3)
 
 
-
 ################## GUARANDO LA CONFIGURACION ##################
-
 
 boton_guardar = tk.Button(frame5, text ="Guardar", command = guardar)
 boton_guardar.pack()
-
 
 ################## EMPAQUETADO DE LOS FRAMES ##################
 
