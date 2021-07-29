@@ -14,6 +14,7 @@ config.read('GUI/config.ini')
 rvo = config.get('REACTIVO', 'reactivo')
 num_racks = int(config.get('NUM_RACKS', 'num_racks'))
 falcons = dict(config.items('VOL_FALCONS'))
+primer_tip = config.get('FIRST_TIP', 'tip')
 
 # Procesamos el diccionario para que sea mas facil correrlo
 # Pasamos el volumen de los falcons a uL
@@ -94,13 +95,13 @@ def run(protocol: protocol_api.ProtocolContext):
 
     elif rvo == '40x' or rvo == 'PC':
         pipette = protocol.load_instrument(
-            'p300_single', 'right', tip_racks=[tiprack])    
+            'p300_single', 'right', tip_racks=[tiprack])
 
 
 
 
     # commands
-    pipette.pick_up_tip()
+    pipette.pick_up_tip(tiprack[primer_tip])
 
 
     for i in range(num_racks):
@@ -193,7 +194,8 @@ def run(protocol: protocol_api.ProtocolContext):
         # A los 18 mm se va a .5. En la documentacion hay acalara que hay que tener
         # cuidado con que tome valores negativos pq se estrella el tip.
 
-    pipette.drop_tip()
+    # pipette.drop_tip()
+    pipette.return_tip()
 
     #Apaga la luz
     protocol.set_rail_lights(False)
