@@ -116,8 +116,8 @@ def guardar():
 	upload_script = ["scp",
 					 "-i",
 					 "ot2_ssh_key",
-					 "config.ini",
-					 "root@"+ OT2_IP +":/data/user_storage"]
+					 "../config.ini",
+					 "root@" + OT2_IP + ":/data/user_storage"]
 
 	upload = subprocess.run(upload_script, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	# upload.wait(10)

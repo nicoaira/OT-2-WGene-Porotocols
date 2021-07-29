@@ -10,7 +10,7 @@ import math
 
 config = configparser.ConfigParser()
 
-config.read('config.ini')
+config.read('/data/user_storage/config.ini')
 rvo = config.get('REACTIVO', 'reactivo')
 num_racks = int(config.get('NUM_RACKS', 'num_racks'))
 falcons = dict(config.items('VOL_FALCONS'))
@@ -128,7 +128,7 @@ def run(protocol: protocol_api.ProtocolContext):
             # A partir de ahi toma desde el fondo
 
             if vol > 3750:
-                pipette.well_bottom_clearance.aspirate = 19.1 + ((vol-3750)/1000) * 1.86
+                pipette.well_bottom_clearance.aspirate = 16 + ((vol-3750)/1000) * 1.86
             else:
                 pipette.well_bottom_clearance.aspirate = .5
                 
