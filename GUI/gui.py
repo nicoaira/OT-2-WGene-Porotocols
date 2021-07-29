@@ -108,7 +108,7 @@ def guardar():
 
 	config['VOL_FALCONS'] = falcons_dict
 
-	with open('config.ini', 'w') as configfile:
+	with open('../config.ini', 'w') as configfile:
 		config.write(configfile)
 
 	#### Carga en OT-2
