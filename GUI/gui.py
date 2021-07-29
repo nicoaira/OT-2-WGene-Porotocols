@@ -16,7 +16,6 @@ root.title('Protocolo - WGene SARS-CoV-2 RT Detection')
 
 
 rvo = tk.StringVar()
-first_tip = tk.StringVar()
 
 
 ################## DEFINICION DE FUNCIONES ##################
@@ -35,8 +34,65 @@ def seleccion_num_falcons(event):
 			falcons[i].config(state = 'disabled')
 
 
-def saludar():
-	print('holas')
+
+
+def popup_select_tip():
+	first_tip = tk.StringVar()
+
+
+
+	def guardar_seleccion_tip():
+		entry_primer_tip.configure(state='normal')
+		entry_primer_tip.insert(0, first_tip.get())
+		print(first_tip.get())
+		popup.destroy()
+
+	def guardar_tip():
+		config = configparser.ConfigParser()
+
+		config['FIRST_TIP'] = {'tip' : first_tip.get()}
+
+		with open('config.ini', 'w') as configfile:
+			config.write(configfile)
+
+
+	popup = tk.Tk()
+	popup.wm_title("Seleccion del primer tip")
+
+	label_tips = tk.Label(popup, text = 'Seleccione el primer tip disponible:')
+	label_tips.grid(row = 1, column = 1, columnspan = 12, padx = 10, pady = 10)
+
+	for i in range(12):
+		label_tips = tk.Label(popup, text = str(i+1))
+		label_tips.grid(row = 2, column = 2 + i, padx = 10, pady = 10)
+
+	for j in range(8):
+		label_tips = tk.Label(popup, text = string.ascii_uppercase[j])
+		label_tips.grid(row = 3 + j, column = 1, padx = 10, pady = 10)
+
+
+	tips_list = []
+	for i in range(12):
+		for j in range(8):
+
+			tip = tk.Radiobutton(
+				master = popup,
+				value = string.ascii_uppercase[j]+str(i+1),
+				variable = first_tip)
+
+			tips_list.append(tip)
+
+			tip.grid(row = 3 + j, column = 2 + i, padx = 10, pady = 10)
+
+
+
+	B1 = ttk.Button(popup, text="Guardar seleccion", command = guardar_tip)
+	B1.grid(row = 11, column = 1, columnspan = 12, padx = 10, pady = 10)
+
+	popup.resizable(False, False)
+	popup.mainloop()
+
+
 
 def guardar():
 	config = configparser.ConfigParser()
@@ -163,33 +219,49 @@ sub_frame3.pack()
 
 ################## SELECCION DEL PRIMER TIP ##################
 
-label_tips = tk.Label(frame5, text = 'Seleccione el primer tip disponible:')
-label_tips.grid(row = 1, column = 1, columnspan = 12, padx = 10, pady = 10)
+label_tips = tk.Label(frame5, text = 'Primer tip disponible:')
+label_tips.grid(row = 1, column = 1, columnspan = 2, padx = 10, pady = 3)
 
-for i in range(12):
-	label_tips = tk.Label(frame5, text = str(i+1))
-	label_tips.grid(row = 2, column = 2 + i, padx = 10, pady = 10)
+entry_primer_tip = tk.Entry(frame5, width = 4)
+entry_primer_tip.insert(0,'A1')
+# entry_primer_tip.configure(state='disabled')
+entry_primer_tip.grid(row = 2, column = 1, padx = 10, pady = 3)
 
-for j in range(8):
-	label_tips = tk.Label(frame5, text = string.ascii_uppercase[j])
-	label_tips.grid(row = 3 + j, column = 1, padx = 10, pady = 10)
-
-
-tips_list = []
-for i in range(12):
-	for j in range(8):
-
-		tip = tk.Radiobutton(
-			master = frame5,
-			value = string.ascii_uppercase[j]+str(i+1),
-			variable = first_tip)
-
-		tips_list.append(tip)
-
-		tip.grid(row = 3 + j, column = 2 + i, padx = 10, pady = 10)
+boton_select_tip = tk.Button(frame5, text ="Seleccionar", command = popup_select_tip)
+boton_select_tip.grid(row = 2, column = 2, padx = 10, pady = 3)
 
 
+# for i in range(12):
+# 	label_tips = tk.Label(frame5, text = str(i+1))
+# 	label_tips.grid(row = 2, column = 2 + i, padx = 10, pady = 10)
 
+# for j in range(8):
+# 	label_tips = tk.Label(frame5, text = string.ascii_uppercase[j])
+# 	label_tips.grid(row = 3 + j, column = 1, padx = 10, pady = 10)
+
+
+# tips_list = []
+# for i in range(12):
+# 	for j in range(8):
+
+# 		tip = tk.Radiobutton(
+# 			master = frame5,
+# 			value = string.ascii_uppercase[j]+str(i+1),
+# 			variable = first_tip)
+
+# 		tips_list.append(tip)
+
+# 		tip.grid(row = 3 + j, column = 2 + i, padx = 10, pady = 10)
+
+
+
+
+################## GUARANDO LA CONFIGURACION ##################
+
+
+
+boton_guardar = tk.Button(frame4, text ="Guardar", command = guardar)
+boton_guardar.pack()
 
 
 ################## EMPAQUETADO DE LOS FRAMES ##################
@@ -202,14 +274,6 @@ frame4.grid(row = 4, column = 1, padx = 10, pady = 10)
 frame5.grid(row = 5, column = 1, padx = 10, pady = 10)
 
 
-
-################## GUARANDO LA CONFIGURACION ##################
-
-
-
-
-boton_guardar = tk.Button(frame4, text ="Guardar", command = guardar)
-boton_guardar.pack()
 
 
 root.resizable(False, False)
