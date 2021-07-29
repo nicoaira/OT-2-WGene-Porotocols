@@ -166,6 +166,15 @@ sub_frame3.pack()
 label_tips = tk.Label(frame5, text = 'Seleccione el primer tip disponible:')
 label_tips.grid(row = 1, column = 1, columnspan = 12, padx = 10, pady = 10)
 
+for i in range(12):
+	label_tips = tk.Label(frame5, text = str(i+1))
+	label_tips.grid(row = 2, column = 2 + i, padx = 10, pady = 10)
+
+for j in range(8):
+	label_tips = tk.Label(frame5, text = string.ascii_uppercase[j])
+	label_tips.grid(row = 3 + j, column = 1, padx = 10, pady = 10)
+
+
 tips_list = []
 for i in range(12):
 	for j in range(8):
@@ -177,7 +186,7 @@ for i in range(12):
 
 		tips_list.append(tip)
 
-		tip.grid(row = 2 + j, column = 1 + i, padx = 10, pady = 10)
+		tip.grid(row = 3 + j, column = 2 + i, padx = 10, pady = 10)
 
 
 
