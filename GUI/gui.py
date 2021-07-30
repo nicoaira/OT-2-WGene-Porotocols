@@ -4,7 +4,7 @@ from tkinter.messagebox import showinfo
 import configparser
 import string
 import subprocess
-
+import os
 
 
 
@@ -20,7 +20,7 @@ root.iconbitmap("wl-icono.ico")
 
 rvo = tk.StringVar()
 first_tip = tk.StringVar()
-OT2_IP = "169.254.77.218"
+OT2_IP = "169.254.115.253"
 
 
 ################## DEFINICION DE FUNCIONES ##################
@@ -91,10 +91,10 @@ def popup_advertencia(msg):
 
 	popup_advertencia = tk.Toplevel(root)
 	popup_advertencia.wm_title("Error!")
-	label = ttk.Label(popup, text=msg, font=NORM_FONT)
+	label = ttk.Label(popup_advertencia, text=msg)
 	label.pack(side="top", fill="x", pady=10)
 
-	B2 = ttk.Button(popup, text="Okay", command=popup.destroy)
+	B2 = ttk.Button(popup_advertencia, text="Okay", command=popup_advertencia.destroy)
 	B2.pack()
 
 	popup_advertencia.resizable(False, False)
@@ -135,13 +135,21 @@ def guardar():
 					 "../config.ini",
 					 "root@" + OT2_IP + ":/data/user_storage"]
 
-
 	try:
-		upload = subprocess.run(upload_script, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		p = subprocess.check_call(upload_script)
 	except:
 		popup_advertencia("No se pudo guardar la configuracion!")
+
 	else:
 		popup_advertencia("Configuracion guardada exitosamente!")
+
+
+	# try:
+	# 	upload = subprocess.run(upload_script, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	# except:
+	#
+	# else:
+	#
 
 	# upload.wait(10)
 
@@ -272,10 +280,15 @@ boton_select_tip = tk.Button(frame4, text ="Seleccionar", command = popup_select
 boton_select_tip.grid(row = 2, column = 2, padx = 10, pady = 3)
 
 
-################## GUARANDO LA CONFIGURACION ##################
+################## BOTON GUARDAR ##################
 
 boton_guardar = tk.Button(frame5, text ="Guardar", command = guardar)
 boton_guardar.pack()
+
+################## BOTON OPCIONES AVANZADAS ##################
+
+boton_oa = tk.Button(frame5, text ="Guardar", command = guardar)
+boton_oa.pack()
 
 ################## EMPAQUETADO DE LOS FRAMES ##################
 
