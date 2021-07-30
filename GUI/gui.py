@@ -7,6 +7,10 @@ import subprocess
 import os
 
 
+################## CONFIGURACION IP OT-2 ##################
+
+
+
 
 ###############################################
 
@@ -15,12 +19,22 @@ root.title('Protocolo - WGene SARS-CoV-2 RT Detection')
 root.iconbitmap("wl-icono.ico")
 
 
+
 ################## VARIABLES ##################
 
 
 rvo = tk.StringVar()
 first_tip = tk.StringVar()
-OT2_IP = "169.254.115.253"
+OT2_IP = tk.StringVar()
+
+try:
+	config = configparser.ConfigParser()
+	config.read('../config.ini')
+	OT2_IP.set(config.get('OT-2-IP', 'ip'))
+
+except:
+	OT2_IP.set('')
+
 
 
 ################## DEFINICION DE FUNCIONES ##################
@@ -94,7 +108,7 @@ def popup_advertencia(msg):
 	label = ttk.Label(popup_advertencia, text=msg)
 	label.pack(side="top", fill="x", pady=10)
 
-	B2 = ttk.Button(popup_advertencia, text="Okay", command=popup_advertencia.destroy)
+	B2 = ttk.Button(popup_advertencia, text="Cerrar", command=popup_advertencia.destroy)
 	B2.pack()
 
 	popup_advertencia.resizable(False, False)
@@ -110,6 +124,7 @@ def guardar():
 	config['NUM_RACKS'] = {'num_racks' : menu_num_racks.get()}
 	config['NUM_FALCONS'] = {'num_falcons' : menu_num_falcon.get()}
 	config['FIRST_TIP'] = {'tip': entry_primer_tip.get()}
+	config['OT-2-IP'] = {'ip': OT2_IP.get()}
 
 
 	falcons_dict = {}
@@ -133,7 +148,7 @@ def guardar():
 					 "-i",
 					 "ot2_ssh_key",
 					 "../config.ini",
-					 "root@" + OT2_IP + ":/data/user_storage"]
+					 "root@" + OT2_IP.get() + ":/data/user_storage"]
 
 	try:
 		p = subprocess.check_call(upload_script)
@@ -144,14 +159,41 @@ def guardar():
 		popup_advertencia("Configuracion guardada exitosamente!")
 
 
-	# try:
-	# 	upload = subprocess.run(upload_script, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-	# except:
-	#
-	# else:
-	#
+def opciones_avanzadas():
 
-	# upload.wait(10)
+	def guardar_config_avanzada():
+		OT2_IP.set(entry_IP.get())
+
+		try:
+			config = configparser.ConfigParser()
+			config.read("../config.ini")
+			config.set("OT-2-IP", "ip", OT2_IP.get())
+
+			with open('../config.ini', 'w') as configfile:
+				config.write(configfile)
+
+		except:
+			pass
+
+		finally:
+			popup_oa.destroy()
+
+
+	popup_oa = tk.Toplevel(root)
+	popup_oa.wm_title("Opciones Avanzadas")
+	label_IP = ttk.Label(popup_oa, text='IP OT-2:')
+	entry_IP = tk.Entry(popup_oa, width = 16)
+	entry_IP.insert(0, OT2_IP.get())
+	label_IP.grid(row = 1, column = 1, padx = 10, pady = 10)
+	entry_IP.grid(row = 1, column = 2, padx = 10, pady = 10)
+
+	B3 = ttk.Button(popup_oa, text="Guardar", command=guardar_config_avanzada)
+	B3.grid(row = 2, column = 1, columnspan = 2, padx = 10, pady = 10)
+
+	popup_oa.resizable(False, False)
+	popup_oa.mainloop()
+
+
 
 
 ################## INICIALIZACION DE FRAMES ##################
@@ -163,6 +205,7 @@ frame3 = tk.Frame(relief  = tk.GROOVE, borderwidth=3, pady=20)
 sub_frame3 = tk.Frame(master = frame3)
 frame4 = tk.Frame()
 frame5 = tk.Frame()
+frame6 = tk.Frame()
 
 
 ################## SELECCION DE REACTIVO ##################
@@ -287,8 +330,9 @@ boton_guardar.pack()
 
 ################## BOTON OPCIONES AVANZADAS ##################
 
-boton_oa = tk.Button(frame5, text ="Guardar", command = guardar)
+boton_oa = tk.Button(frame6, text ="Opciones Avanzadas", command = opciones_avanzadas)
 boton_oa.pack()
+
 
 ################## EMPAQUETADO DE LOS FRAMES ##################
 
@@ -298,7 +342,7 @@ frame2.grid(row = 2, column = 1, padx = 10, pady = 10)
 frame3.grid(row = 3, column = 1, padx = 10, pady = 10)
 frame4.grid(row = 4, column = 1, padx = 10, pady = 10)
 frame5.grid(row = 5, column = 1, padx = 10, pady = 10)
-
+frame6.grid(row = 1, column = 2, padx = 10, pady = 10)
 
 
 
