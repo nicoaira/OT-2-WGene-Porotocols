@@ -5,6 +5,7 @@ import configparser
 import string
 import subprocess
 import os
+from PIL import ImageTk, Image
 
 
 ################## CONFIGURACION IP OT-2 ##################
@@ -259,7 +260,7 @@ frame4 = tk.Frame()
 frame5 = tk.Frame()
 frame6 = tk.Frame()
 frame7 = tk.Frame()
-
+frame_logo = tk.Frame()
 
 
 ################## SELECCION DE REACTIVO ##################
@@ -396,7 +397,9 @@ checkb_ult_tubo = tk.Checkbutton(frame7,
 								 variable = rack_completo_check,
 								 height = 1,
 								 width = 15,
-								 command = disable_enable_button)
+								 command = disable_enable_button,
+								 onvalue=1, offvalue=0)
+rack_completo_check.set(1)
 checkb_ult_tubo.grid(row = 1, column = 1, columnspan = 2, padx = 3, pady = 3)
 
 
@@ -409,9 +412,16 @@ entry_ult_tubo.configure(state='readonly')
 entry_ult_tubo.grid(row = 3, column = 1, padx = 3, pady = 3)
 
 
-boton_ult_tubo = tk.Button(frame7, text ="Seleccionar", state = 'disabled',  command = popup_select_tube)
+boton_ult_tubo = tk.Button(frame7, text ="Seleccionar", state = 'disable',  command = popup_select_tube)
 boton_ult_tubo.grid(row = 3, column = 2, columnspan = 1, padx = 10, pady = 3)
 
+
+################## LOGO WL ##################
+
+
+logo = ImageTk.PhotoImage(Image.open('wl-logo.png'))
+panel = tk.Label(frame_logo, image = logo)
+panel.pack(side = "bottom", fill = "both", expand = "yes")
 
 ################## EMPAQUETADO DE LOS FRAMES ##################
 
@@ -423,6 +433,7 @@ frame4.grid(row = 4, column = 1, padx = 10, pady = 10)
 frame5.grid(row = 5, column = 1, padx = 10, pady = 10)
 frame6.grid(row = 1, column = 2, padx = 10, pady = 10)
 frame7.grid(row = 2, column = 2, columnspan = 4, padx = 10, pady = 10)
+frame_logo.grid(row = 3, column = 2, columnspan = 4, padx = 10, pady = 10)
 
 
 
