@@ -26,6 +26,8 @@ root.iconbitmap("wl-icono.ico")
 rvo = tk.StringVar()
 first_tip = tk.StringVar()
 OT2_IP = tk.StringVar()
+last_tube = tk.StringVar()
+rack_completo_check = tk.IntVar()
 
 try:
 	config = configparser.ConfigParser()
@@ -51,6 +53,49 @@ def seleccion_num_falcons(event):
 		else:
 			falcons[i].delete(0,4)
 			falcons[i].config(state = 'disabled')
+
+
+def popup_select_tube():
+
+	def guardar_seleccion_tubo():
+		entry_ult_tubo.configure(state='normal')
+		entry_ult_tubo.delete(0, tk.END)
+		entry_ult_tubo.insert(0, last_tube.get())
+		entry_ult_tubo.configure(state='readonly')
+		popup.destroy()
+
+	popup = tk.Toplevel(root)
+	popup.wm_title("Seleccion del ultimo tubo")
+
+	label_tips = tk.Label(popup, text='Seleccione el ultimo tubo disponible:')
+	label_tips.grid(row=1, column=1, columnspan=12, padx=10, pady=10)
+
+	for i in range(8):
+		label_tips = tk.Label(popup, text=str(i + 1))
+		label_tips.grid(row=2, column=2 + i, padx=10, pady=10)
+
+	for j in range(5):
+		label_tips = tk.Label(popup, text=string.ascii_uppercase[j])
+		label_tips.grid(row=3 + j, column=1, padx=10, pady=10)
+
+	tips_list = []
+	for i in range(8):
+		for j in range(5):
+			tip = tk.Radiobutton(
+				master=popup,
+				value=string.ascii_uppercase[j] + str(i + 1),
+				variable=last_tube)
+
+			tips_list.append(tip)
+
+			tip.grid(row=3 + j, column=2 + i, padx=10, pady=10)
+
+	B1 = ttk.Button(popup, text="Guardar seleccion", command=guardar_seleccion_tubo)
+	B1.grid(row=11, column=1, columnspan=12, padx=10, pady=10)
+
+	popup.resizable(False, False)
+	popup.mainloop()
+
 
 def popup_select_tip():
 	first_tip = tk.StringVar()
@@ -125,6 +170,7 @@ def guardar():
 	config['NUM_FALCONS'] = {'num_falcons' : menu_num_falcon.get()}
 	config['FIRST_TIP'] = {'tip': entry_primer_tip.get()}
 	config['OT-2-IP'] = {'ip': OT2_IP.get()}
+	config['LAST_TUBE'] = {'tube': entry_ult_tubo.get()}
 
 
 	falcons_dict = {}
@@ -150,13 +196,13 @@ def guardar():
 					 "../config.ini",
 					 "root@" + OT2_IP.get() + ":/data/user_storage"]
 
-	try:
-		p = subprocess.check_call(upload_script)
-	except:
-		popup_advertencia("No se pudo guardar la configuracion!")
-
-	else:
-		popup_advertencia("Configuracion guardada exitosamente!")
+	# try:
+	# 	p = subprocess.check_call(upload_script)
+	# except:
+	# 	popup_advertencia("No se pudo guardar la configuracion!")
+	#
+	# else:
+	# 	popup_advertencia("Configuracion guardada exitosamente!")
 
 
 def opciones_avanzadas():
@@ -194,6 +240,12 @@ def opciones_avanzadas():
 	popup_oa.mainloop()
 
 
+def disable_enable_button():
+	if boton_ult_tubo["state"] == "normal":
+		boton_ult_tubo["state"] = "disabled"
+	else:
+		boton_ult_tubo["state"] = "normal"
+
 
 
 ################## INICIALIZACION DE FRAMES ##################
@@ -206,6 +258,8 @@ sub_frame3 = tk.Frame(master = frame3)
 frame4 = tk.Frame()
 frame5 = tk.Frame()
 frame6 = tk.Frame()
+frame7 = tk.Frame()
+
 
 
 ################## SELECCION DE REACTIVO ##################
@@ -334,6 +388,31 @@ boton_oa = tk.Button(frame6, text ="Opciones Avanzadas", command = opciones_avan
 boton_oa.pack()
 
 
+################## SELECCION DEL ULTIMO TUBO ##################
+
+
+checkb_ult_tubo = tk.Checkbutton(frame7,
+								 text = "Ultimo rack completo",
+								 variable = rack_completo_check,
+								 height = 1,
+								 width = 15,
+								 command = disable_enable_button)
+checkb_ult_tubo.grid(row = 1, column = 1, columnspan = 2, padx = 3, pady = 3)
+
+
+label_ult_tubo2 = tk.Label(frame7, text = 'Ultimo tubo:')
+label_ult_tubo2.grid(row = 2, column = 1, columnspan = 2, padx = 3, pady = 3)
+
+entry_ult_tubo = tk.Entry(frame7, width = 4)
+entry_ult_tubo.insert(0,'E8')
+entry_ult_tubo.configure(state='readonly')
+entry_ult_tubo.grid(row = 3, column = 1, padx = 3, pady = 3)
+
+
+boton_ult_tubo = tk.Button(frame7, text ="Seleccionar", state = 'disabled',  command = popup_select_tube)
+boton_ult_tubo.grid(row = 3, column = 2, columnspan = 1, padx = 10, pady = 3)
+
+
 ################## EMPAQUETADO DE LOS FRAMES ##################
 
 
@@ -343,6 +422,7 @@ frame3.grid(row = 3, column = 1, padx = 10, pady = 10)
 frame4.grid(row = 4, column = 1, padx = 10, pady = 10)
 frame5.grid(row = 5, column = 1, padx = 10, pady = 10)
 frame6.grid(row = 1, column = 2, padx = 10, pady = 10)
+frame7.grid(row = 2, column = 2, columnspan = 4, padx = 10, pady = 10)
 
 
 
