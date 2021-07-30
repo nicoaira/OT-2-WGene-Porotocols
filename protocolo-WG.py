@@ -3,6 +3,7 @@ import json
 import opentrons.execute
 import configparser
 import math
+import string
 
 
 
@@ -18,12 +19,14 @@ metadata = {
 # Info de configuracion
 
 config = configparser.ConfigParser()
+config.read('config.ini')
+# config.read('/data/user_storage/config.ini')
 
-config.read('/data/user_storage/config.ini')
 rvo = config.get('REACTIVO', 'reactivo')
 num_racks = int(config.get('NUM_RACKS', 'num_racks'))
 falcons = dict(config.items('VOL_FALCONS'))
 primer_tip = config.get('FIRST_TIP', 'tip')
+last_tube = 'B2'
 
 # Procesamos el diccionario para que sea mas facil correrlo
 # Pasamos el volumen de los falcons a uL
@@ -50,7 +53,6 @@ elif rvo == 'nfw':
 elif rvo == 'pc':
     vol_pipeta = 200
     vol_dispensar = 54
-
 
 
 
@@ -100,9 +102,12 @@ def run(protocol: protocol_api.ProtocolContext):
             'p300_single', 'right', tip_racks=[tiprack])
 
 
+    last_tube_obj = racks[-1].wells_by_name()[last_tube]
+    print('ULTIMO TUBO>>>',last_tube_obj)
+
+    ##################### PROTOCOLO #####################
 
 
-    # commands
     pipette.pick_up_tip(tiprack[primer_tip])
 
 
@@ -144,8 +149,13 @@ def run(protocol: protocol_api.ProtocolContext):
                     for m in range(vol_pipeta//vol_dispensar):
 
                         # Chequea que c no genere un OutOfIndex
-                        if c+m < wells_per_rack:
-                            pipette.dispense(vol_dispensar, racks[i].wells()[c+m].bottom(10))
+                        if c < wells_per_rack:
+                            pipette.dispense(vol_dispensar, racks[i].wells()[c].bottom(10))
+
+                            if racks[i].wells()[c] == last_tube_obj:
+                                c = wells_per_rack
+                            else:
+                                c += 1
                         else:
                             pipette.blow_out(plate[falcon])
                             break
@@ -161,15 +171,15 @@ def run(protocol: protocol_api.ProtocolContext):
                     # Se descuenta el volumen usado del falcon
                     falcons[falcon] -= vol_usado
 
-                    # Cantidad de wells que se llenan en cada paso
-                    c += vol_pipeta//vol_dispensar
-
 
 
                 else:
+
                     pasos = math.ceil(vol_dispensar/vol_pipeta)
 
                     pipette.aspirate(vol_pipeta, plate[falcon])
+
+
 
                     for m in range(pasos):
 
@@ -187,7 +197,13 @@ def run(protocol: protocol_api.ProtocolContext):
                     falcons[falcon] -= vol_usado
                     print('Volumen en el falcon', falcon, '>>', falcons[falcon])
 
-                    c += 1
+                    if racks[i].wells()[c] == last_tube_obj:
+                        break
+                    else:
+                        c += 1
+
+
+
 
 
 
