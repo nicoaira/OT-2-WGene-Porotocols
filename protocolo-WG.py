@@ -6,6 +6,15 @@ import math
 
 
 
+# metadata
+metadata = {
+    'protocolName': 'Porotocolo - WGener SARS-CoV-2 RT Detection',
+    'author': 'CIBIO-WL (Nicolas Aira y Mariano Depiante)',
+    'description': 'Protocolo para el alicuotado de los 4 semielavorados del kit',
+    'apiLevel': '2.10'
+}
+
+
 # Info de configuracion
 
 config = configparser.ConfigParser()
@@ -43,14 +52,6 @@ elif rvo == 'pc':
     vol_dispensar = 54
 
 
-
-# metadata
-metadata = {
-    'protocolName': 'Porotocolo - WGener SARS-CoV-2 RT Detection',
-    'author': 'CIBIO-WL (Nicolas Aira y Mariano Depiante)',
-    'description': 'Protocolo para el alicuotado de los 4 semielavorados del kit',
-    'apiLevel': '2.10'
-}
 
 
 

@@ -12,6 +12,8 @@ import subprocess
 
 root = tk.Tk()
 root.title('Protocolo - WGene SARS-CoV-2 RT Detection')
+root.iconbitmap("wl-icono.ico")
+
 
 ################## VARIABLES ##################
 
@@ -85,6 +87,20 @@ def popup_select_tip():
 	popup.resizable(False, False)
 	popup.mainloop()
 
+def popup_advertencia(msg):
+
+	popup_advertencia = tk.Toplevel(root)
+	popup_advertencia.wm_title("Error!")
+	label = ttk.Label(popup, text=msg, font=NORM_FONT)
+	label.pack(side="top", fill="x", pady=10)
+
+	B2 = ttk.Button(popup, text="Okay", command=popup.destroy)
+	B2.pack()
+
+	popup_advertencia.resizable(False, False)
+	popup_advertencia.mainloop()
+
+
 
 def guardar():
 
@@ -119,7 +135,14 @@ def guardar():
 					 "../config.ini",
 					 "root@" + OT2_IP + ":/data/user_storage"]
 
-	upload = subprocess.run(upload_script, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+	try:
+		upload = subprocess.run(upload_script, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	except:
+		popup_advertencia("No se pudo guardar la configuracion!")
+	else:
+		popup_advertencia("Configuracion guardada exitosamente!")
+
 	# upload.wait(10)
 
 
