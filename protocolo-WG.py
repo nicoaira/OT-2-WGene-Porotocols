@@ -99,7 +99,7 @@ def run(protocol: protocol_api.ProtocolContext):
         plate = protocol.load_labware('opentrons_6_tuberack_falcon_50ml_conical', 11)
 
     elif rvo == '40x':
-        plate = protocol.load_labware('wienerlab_rt_mix_rack', 11)
+        plate = protocol.load_labware('wiener_28_wellplate_5000ul', 11)
 
 
     # Los racks se cargan en una lista.
