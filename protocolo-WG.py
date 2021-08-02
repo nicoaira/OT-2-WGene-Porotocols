@@ -37,6 +37,12 @@ for k,v in falcons.items():
     print(k, '>>',v)
 
 
+if rvo == '40x':
+    falcons = {}
+    for i in string.ascii_uppercase(4):
+        for j in range(1,8):
+            falcons[i+str(j)] = 1500
+
 
 if rvo == '5x':
     vol_pipeta = 1000
@@ -55,6 +61,17 @@ elif rvo == 'pc':
     vol_dispensar = 54
 
 
+if rvo == '5x' or rvo == 'nfw' or rvo == 'pc':
+    vol_limite = 3750  # Vol a partir del cual toma desde la base
+    vol_muerto = 200 + vol_dispensar*1.1
+    altura_base = 16
+    rate_mm_mL = 1.86
+
+elif rvo == '40x':
+    vol_limite = 700 #MEDIR! Vol a partir del cual toma desde la base
+    altura_base = 7 #MEDIR!
+    rate_mm_mL = 5 #MEDIR!
+    vol_muerto = vol_dispensar*1.1
 
 
 
@@ -75,7 +92,12 @@ def run(protocol: protocol_api.ProtocolContext):
     elif rvo == '40x' or rvo == 'pc':
         tiprack = protocol.load_labware('opentrons_96_filtertiprack_200ul', 10)
 
-    plate = protocol.load_labware('opentrons_6_tuberack_falcon_50ml_conical', 11)
+
+    if rvo == '5x' or rvo == 'nfw' or rvo == 'pc':
+        plate = protocol.load_labware('opentrons_6_tuberack_falcon_50ml_conical', 11)
+
+    elif rvo == '40x':
+        plate = protocol.load_labware('wienerlab_rt_mix_rack', 11)
 
 
     # Los racks se cargan en una lista.
@@ -111,6 +133,7 @@ def run(protocol: protocol_api.ProtocolContext):
     pipette.pick_up_tip(tiprack[primer_tip])
 
 
+
     for i in range(num_racks):
 
         c = 0
@@ -122,9 +145,9 @@ def run(protocol: protocol_api.ProtocolContext):
             print('FALCON:', falcon, '- VOLUMEN:', vol)
 
             # Se busca el primer falcon que tenga volumen
-            if vol < 200 + vol_dispensar*1.1:
+            if vol < vol_muerto:
                 continue
-                # Si el volumen es menor a 1100 uL busca el siguiente falcon
+                # Si el volumen es menor al volumen muerto busca el siguiente falcon
             else:
                 pass
 
@@ -133,11 +156,12 @@ def run(protocol: protocol_api.ProtocolContext):
             # Toma como punto limite el cono inferior del falcon (aprox 3750uL)
             # A partir de ahi toma desde el fondo
 
-            if vol > 3750:
-                pipette.well_bottom_clearance.aspirate = 16 + ((vol-3750)/1000) * 1.86
+            if vol > vol_limite:
+                pipette.well_bottom_clearance.aspirate = altura_base + ((vol-vol_limite)/1000) * rate_mm_mL
             else:
                 pipette.well_bottom_clearance.aspirate = .5
-                
+
+
 
             while c < wells_per_rack:
 
@@ -204,18 +228,14 @@ def run(protocol: protocol_api.ProtocolContext):
 
 
 
-
-
-
-
                 if pipette.well_bottom_clearance.aspirate > 19.1:
-                    pipette.well_bottom_clearance.aspirate -= 1.86 * vol_usado/1000
+                    pipette.well_bottom_clearance.aspirate -= rate_mm_mL * vol_usado/1000
                 else:
                     pipette.well_bottom_clearance.aspirate = .5
 
 
                 # Chequeo del volumen del falcon antes de repetir cada paso
-                if falcons[falcon] < 200 + vol_dispensar*1.1:
+                if falcons[falcon] < vol_muerto:
                     break
                 else:
                     continue
