@@ -197,13 +197,13 @@ def guardar():
 					 "../config.ini",
 					 "root@" + OT2_IP.get() + ":/data/user_storage"]
 
-	# try:
-	# 	p = subprocess.check_call(upload_script)
-	# except:
-	# 	popup_advertencia("No se pudo guardar la configuracion!")
-	#
-	# else:
-	# 	popup_advertencia("Configuracion guardada exitosamente!")
+	try:
+		p = subprocess.check_call(upload_script)
+	except:
+		popup_advertencia("No se pudo guardar la configuracion!")
+
+	else:
+		popup_advertencia("Configuracion guardada exitosamente!")
 
 
 def opciones_avanzadas():
