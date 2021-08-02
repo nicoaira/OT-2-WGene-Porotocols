@@ -21,27 +21,27 @@ metadata = {
 config = configparser.ConfigParser()
 config.read('config.ini')
 # config.read('/data/user_storage/config.ini')
-
 rvo = config.get('REACTIVO', 'reactivo')
 num_racks = int(config.get('NUM_RACKS', 'num_racks'))
-falcons = dict(config.items('VOL_FALCONS'))
 primer_tip = config.get('FIRST_TIP', 'tip')
-last_tube = 'B2'
+last_tube = config.get('LAST_TUBE', 'tube')
 
-# Procesamos el diccionario para que sea mas facil correrlo
-# Pasamos el volumen de los falcons a uL
+#### Carga de los tubos con el reactivo a alicuotar
 
-falcons = {k.upper():int(v)*1000 for (k, v) in falcons.items()}
+if rvo == '5x' or rvo == 'nfw' or rvo == 'pc':
+    falcons = dict(config.items('VOL_FALCONS'))
 
-for k,v in falcons.items():
-    print(k, '>>',v)
+    # Procesamos el diccionario para que sea mas facil correrlo
+    # Pasamos el volumen de los falcons a uL
 
+    falcons = {k.upper(): int(v) * 1000 for (k, v) in falcons.items()}
 
-if rvo == '40x':
+elif rvo == '40x':
     falcons = {}
-    for i in string.ascii_uppercase(4):
+    for i in string.ascii_uppercase[:4]:
         for j in range(1,8):
             falcons[i+str(j)] = 1500
+
 
 
 if rvo == '5x':
@@ -61,16 +61,18 @@ elif rvo == 'pc':
     vol_dispensar = 54
 
 
+#### Parametros geometricos de los tubos con los reactivos
+
 if rvo == '5x' or rvo == 'nfw' or rvo == 'pc':
     vol_limite = 3750  # Vol a partir del cual toma desde la base
-    vol_muerto = 200 + vol_dispensar*1.1
     altura_base = 16
     rate_mm_mL = 1.86
+    vol_muerto = 200 + vol_dispensar*1.1
 
 elif rvo == '40x':
-    vol_limite = 700 #MEDIR! Vol a partir del cual toma desde la base
-    altura_base = 7 #MEDIR!
-    rate_mm_mL = 5 #MEDIR!
+    vol_limite = 300 # Vol a partir del cual toma desde la base
+    altura_base = 8
+    rate_mm_mL = 7.57
     vol_muerto = vol_dispensar*1.1
 
 
