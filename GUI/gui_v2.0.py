@@ -255,6 +255,64 @@ class Page5X(tk.Frame):
 
         sub_frame2.pack()
 
+        ################## SELECCION DEL PRIMER TIP ##################
+
+        def popup_select_tip():
+            first_tip = tk.StringVar()
+
+            def guardar_seleccion_tip():
+                entry_primer_tip.configure(state='normal')
+                entry_primer_tip.delete(0, tk.END)
+                entry_primer_tip.insert(0, first_tip.get())
+                entry_primer_tip.configure(state='readonly')
+                popup.destroy()
+
+            popup = tk.Toplevel(self)
+            popup.wm_title("Seleccion del primer tip")
+
+            label_tips = tk.Label(popup, text='Seleccione el primer tip disponible:')
+            label_tips.grid(row=1, column=1, columnspan=12, padx=10, pady=10)
+
+            for i in range(12):
+                label_tips = tk.Label(popup, text=str(i + 1))
+                label_tips.grid(row=2, column=2 + i, padx=10, pady=10)
+
+            for j in range(8):
+                label_tips = tk.Label(popup, text=string.ascii_uppercase[j])
+                label_tips.grid(row=3 + j, column=1, padx=10, pady=10)
+
+            tips_list = []
+            for i in range(12):
+                for j in range(8):
+                    tip = tk.Radiobutton(
+                        master=popup,
+                        value=string.ascii_uppercase[j] + str(i + 1),
+                        variable=first_tip)
+
+                    tips_list.append(tip)
+
+                    tip.grid(row=3 + j, column=2 + i, padx=10, pady=10)
+
+            B1 = ttk.Button(popup, text="Guardar seleccion", command=guardar_seleccion_tip)
+            B1.grid(row=11, column=1, columnspan=12, padx=10, pady=10)
+
+            popup.resizable(False, False)
+            popup.mainloop()
+
+        sub_frame3 = tk.Frame(self)
+
+        label_tips = tk.Label(sub_frame3, text='Primer tip disponible:')
+        label_tips.grid(row=1, column=1, columnspan=2, padx=10, pady=3)
+
+        entry_primer_tip = tk.Entry(sub_frame3, width=4)
+        entry_primer_tip.insert(0, 'A1')
+        entry_primer_tip.configure(state='readonly')
+        entry_primer_tip.grid(row=2, column=1, padx=10, pady=3)
+
+        boton_select_tip = tk.Button(sub_frame3, text="Seleccionar", command=popup_select_tip)
+        boton_select_tip.grid(row=2, column=2, padx=10, pady=3)
+
+        sub_frame3.pack()
 
     def guardar(self):
         self.controller.shared_data["num_racks"] = menu_num_racks.get()
