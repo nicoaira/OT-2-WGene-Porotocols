@@ -28,7 +28,13 @@ class Keep(tk.Tk):
             'first_tip': tk.StringVar(),
             'ot_2_ip': tk.StringVar(),
             'last_tube': tk.StringVar(),
-            'rack_completo_check' : tk.IntVar()
+            'rack_completo_check' : tk.IntVar(), 
+            'vel_asp_p300' : tk.StringVar(),
+            'vel_disp_p300' : tk.StringVar(),
+            'vel_asp_p1000' : tk.StringVar(),
+            'vel_disp_p1000' : tk.StringVar(),
+            'vel_mov_ot' : tk.StringVar()
+
         }
 
         #### Valores por defecto
@@ -36,6 +42,57 @@ class Keep(tk.Tk):
         self.shared_data['num_racks'].set('1')
         self.shared_data['first_tip'].set('A1')
         self.shared_data['last_tube'].set('E8')
+
+        try:
+            config = configparser.ConfigParser()
+            config.read('../config.ini')
+
+        except:
+            pass
+
+        try:
+            self.shared_data['ot_2_ip'].set(config.get('OT-2-IP', 'ip'))
+
+        except:
+            self.shared_data['ot_2_ip'].set('')
+
+        try:
+            self.shared_data['vel_asp_p300'].set(config.get('VEL_P300', 'asp'))
+
+        except:
+            self.shared_data['vel_asp_p300'].set('')
+
+
+        try:
+            self.shared_data['vel_disp_p300'].set(config.get('VEL_P300', 'disp'))
+
+        except:
+            self.shared_data['vel_disp_p300'].set('')
+
+        try:
+            self.shared_data['vel_asp_p1000'].set(config.get('VEL_P1000', 'asp'))
+
+        except:
+            self.shared_data['vel_asp_p1000'].set('')
+
+        try:
+            self.shared_data['vel_disp_p1000'].set(config.get('VEL_P1000', 'disp'))
+
+        except:
+            self.shared_data['vel_disp_p1000'].set('')
+
+        try:
+            self.shared_data['vel_mov_ot'].set(config.get('VEL_OT-2', 'vel_mov_ot'))
+
+        except:
+            self.shared_data['vel_mov_ot'].set('')
+
+
+
+
+
+
+
 
         ###
 
@@ -126,6 +183,131 @@ class StartPage(tk.Frame):
         button = tk.Button(self, text="Siguiente", command=self.next_page, state = 'disabled')
         button.grid(row = 6, column = 1, padx = 3, pady = 4, sticky = 's')
 
+
+
+        ################## BOTON OPCIONES AVANZADAS ##################
+
+        def opciones_avanzadas():
+
+            def guardar_config_avanzada():
+
+                self.controller.shared_data['ot_2_ip'].set(entry_IP.get())
+                self.controller.shared_data['vel_asp_p300'].set(entry_vel_asp_p300.get())
+                self.controller.shared_data['vel_disp_p300'].set(entry_vel_disp_p300.get())
+                self.controller.shared_data['vel_asp_p1000'].set(entry_vel_asp_p1000.get())
+                self.controller.shared_data['vel_disp_p1000'].set(entry_vel_disp_p1000.get())
+                self.controller.shared_data['vel_mov_ot'].set(entry_vel_ot_2.get())
+
+
+                try:
+                    config = configparser.ConfigParser()
+                    config.read("../config.ini")
+                    config['OT-2-IP'] = {'ip' : self.controller.shared_data['ot_2_ip'].get()}
+                    config['VEL_P300'] = {'asp' : self.controller.shared_data['vel_asp_p300'].get(),
+                                        'disp' : self.controller.shared_data['vel_disp_p300'].get()}
+                    config['VEL_P1000'] = {'asp' : self.controller.shared_data['vel_asp_p1000'].get(),
+                                        'disp' : self.controller.shared_data['vel_disp_p1000'].get()}
+                    config['VEL_OT-2'] = {'vel_mov_ot' : self.controller.shared_data['vel_mov_ot'].get()}
+
+
+                    with open('../config.ini', 'w') as configfile:
+                        config.write(configfile)
+
+                except Exception as e:
+                    print(e)
+
+                finally:
+                    popup_oa.destroy()
+
+
+            popup_oa = tk.Toplevel(self)
+            popup_oa.wm_title("Opciones Avanzadas")
+
+
+
+            frame_ip = tk.Frame(popup_oa, relief='groove')
+
+            label_config_ip = ttk.Label(frame_ip, text='Configuracion de IP')
+            label_IP = ttk.Label(frame_ip, text='IP OT-2:')
+            entry_IP = tk.Entry(frame_ip, width = 16)
+            entry_IP.insert(0, self.controller.shared_data['ot_2_ip'].get())
+            label_config_ip.grid(row = 1, column = 1, padx = 3, pady = 10, columnspan = 2)
+            label_IP.grid(row = 2, column = 1, padx = 3, pady = 10)
+            entry_IP.grid(row = 2, column = 2, padx = 3, pady = 10)
+
+
+            frame_ip.grid(row = 1, column = 1, columnspan=6, padx = 3, pady = 10)
+
+
+
+            frame_p300 = tk.Frame(popup_oa, relief='groove')
+
+
+            label_p300 = ttk.Label(frame_p300, text='Configuracion p300')
+
+            label_vel_asp_p300 = ttk.Label(frame_p300, text='Velocidad de aspiracion (uL/seg):')
+            entry_vel_asp_p300 = tk.Entry(frame_p300, width = 5)
+            entry_vel_asp_p300.insert(0, self.controller.shared_data['vel_asp_p300'].get())
+            label_p300.grid(row = 1, column = 1, padx = 10, pady = 10, columnspan = 2)
+            label_vel_asp_p300.grid(row = 2, column = 1, padx = 3, pady = 10)
+            entry_vel_asp_p300.grid(row = 2, column = 2, padx = 3, pady = 10)
+
+            label_vel_disp_p300 = ttk.Label(frame_p300, text='Velocidad de dispensado (uL/seg):')
+            entry_vel_disp_p300 = tk.Entry(frame_p300, width = 5)
+            entry_vel_disp_p300.insert(0, self.controller.shared_data['vel_disp_p300'].get())
+            label_vel_disp_p300.grid(row = 3, column = 1, padx = 3, pady = 10)
+            entry_vel_disp_p300.grid(row = 3, column = 2, padx = 3, pady = 10)
+
+            frame_p300.grid(row = 2, column = 1, columnspan = 2, padx = 10, pady = 10)
+
+
+
+            frame_p1000 = tk.Frame(popup_oa, relief='groove')
+
+
+            label_p1000 = ttk.Label(frame_p1000, text='Configuracion p1000')
+
+            label_vel_asp_p1000 = ttk.Label(frame_p1000, text='Velocidad de aspiracion (uL/seg):')
+            entry_vel_asp_p1000 = tk.Entry(frame_p1000, width = 5)
+            entry_vel_asp_p1000.insert(0, self.controller.shared_data['vel_asp_p1000'].get())
+            label_p1000.grid(row = 1, column = 1, padx = 10, pady = 10, columnspan = 2)
+            label_vel_asp_p1000.grid(row = 2, column = 1, padx = 3, pady = 10)
+            entry_vel_asp_p1000.grid(row = 2, column = 2, padx = 3, pady = 10)
+
+            label_vel_disp_p1000 = ttk.Label(frame_p1000, text='Velocidad de dispensado (uL/seg):')
+            entry_vel_disp_p1000 = tk.Entry(frame_p1000, width = 5)
+            entry_vel_disp_p1000.insert(0, self.controller.shared_data['vel_disp_p1000'].get())
+            label_vel_disp_p1000.grid(row = 3, column = 1, padx = 3, pady = 10)
+            entry_vel_disp_p1000.grid(row = 3, column = 2, padx = 3, pady = 10)
+
+
+            frame_p1000.grid(row = 3, column = 1, columnspan = 2, padx = 10, pady = 10)
+
+
+
+            frame_vel_ot_2 = tk.Frame(popup_oa, relief='groove')
+
+            label_config_ot_2 = ttk.Label(frame_vel_ot_2, text='Configuracion movimiento OT-2')
+
+            label_vel_ot_2 = ttk.Label(frame_vel_ot_2, text='Velocidad de movimiento del robot (mm/s):')
+            entry_vel_ot_2 = tk.Entry(frame_vel_ot_2, width = 5)
+            entry_vel_ot_2.insert(0, self.controller.shared_data['vel_mov_ot'].get())
+            label_config_ot_2.grid(row = 1, column = 1, padx = 10, pady = 10, columnspan = 2)
+            label_vel_ot_2.grid(row = 2, column = 1, padx = 3, pady = 10)
+            entry_vel_ot_2.grid(row = 2, column = 2, padx = 3, pady = 10)
+
+            frame_vel_ot_2.grid(row = 4, column = 1, columnspan = 2, padx = 10, pady = 10)
+
+
+            B3 = ttk.Button(popup_oa, text="Guardar", command=guardar_config_avanzada)
+            B3.grid(row = 5, column = 1, columnspan = 2, padx = 10, pady = 10)
+
+            popup_oa.resizable(False, False)
+            popup_oa.mainloop()
+
+        boton_oa = tk.Button(self, text ="Opciones Avanzadas", command = opciones_avanzadas)
+        boton_oa.grid(row = 2, column = 2, padx = 3, pady = 4)
+
     def update_widgets(self):
         rvo = self.controller.shared_data["rvo"].get()
 
@@ -139,17 +321,16 @@ class Page5X(tk.Frame):
         super().__init__(parent)
         self.controller = controller
 
-        controller.shared_data['ot_2_ip'].set(123)
-
         def popup_advertencia(title, msg):
+
 
             popup_advertencia = tk.Toplevel(self)
             popup_advertencia.wm_title(title)
             label = ttk.Label(popup_advertencia, text=msg)
-            label.pack(side="top", fill="x", pady=10)
+            label.pack(side="top", fill="x", pady=10, padx=20)
 
             B2 = ttk.Button(popup_advertencia, text="Cerrar", command=popup_advertencia.destroy)
-            B2.pack()
+            B2.pack(padx = 10, pady = 5)
 
             popup_advertencia.resizable(False, False)
             popup_advertencia.mainloop()
@@ -165,6 +346,11 @@ class Page5X(tk.Frame):
             config['FIRST_TIP'] = {'tip': controller.shared_data['first_tip'].get()}
             config['OT-2-IP'] = {'ip': controller.shared_data['ot_2_ip'].get()}
             config['LAST_TUBE'] = {'tube': controller.shared_data['last_tube'].get()}
+            config['VEL_P300'] = {'asp': shared_data['vel_asp_p300'].get()}
+            config['VEL_P300'] = {'disp': controller.shared_data['vel_disp_p300'].get()}
+            config['VEL_P1000'] = {'asp': controller.shared_data['vel_asp_p1000'].get()}
+            config['VEL_P1000'] = {'disp': controller.shared_data['vel_disp_p1000'].get()}
+            config['VEL_OT-2'] = {'vel_mov_ot': controller.shared_data['vel_mov_ot'].get()}
 
 
             falcons_dict = {}
@@ -673,6 +859,8 @@ class Page40X(tk.Frame):
         boton_select_tip.grid(row=2, column=2, padx=3, pady=3, sticky = 'E')
 
         sub_frame3.grid(row=5, column=1, padx=10, pady = 5)
+
+
 
     def guardar(self):
         self.controller.shared_data["num_racks"] = menu_num_racks.get()
