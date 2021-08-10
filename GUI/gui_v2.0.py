@@ -63,8 +63,11 @@ class StartPage(tk.Frame):
         super().__init__(parent)
         self.controller = controller
 
+        def next_available():
+            button["state"] = "normal"
+
         label_rvo = tk.Label(self, text='Reactivo a alicuotar:')
-        label_rvo.pack()
+        label_rvo.grid(row = 1, column = 1, padx = 3, pady = 4, sticky = 'w')
 
         rvo = self.controller.shared_data["rvo"]
 
@@ -72,37 +75,43 @@ class StartPage(tk.Frame):
             master=self,
             text='Master Mix 5x',
             value='5x',
-            variable=rvo)
+            variable=rvo,
+            command = next_available)
 
-        rb_rvo1.pack(padx=3, pady=2)
+
+
+        rb_rvo1.grid(row = 2, column = 1, padx = 3, pady = 4, sticky = 'w')
 
         rb_rvo2 = tk.Radiobutton(
             master=self,
             text='RT Mix 40x',
             value='40x',
-            variable=rvo)
+            variable=rvo,
+            command = next_available)
 
-        rb_rvo2.pack(padx=3, pady=2)
+        rb_rvo2.grid(row = 3, column = 1, padx = 3, pady = 4, sticky = 'w')
 
         rb_rvo3 = tk.Radiobutton(
             master=self,
             text='Nuclease Free Water',
             value='nfw',
-            variable=rvo)
+            variable=rvo,
+            command = next_available)
 
-        rb_rvo3.pack(padx=3, pady=2)
+        rb_rvo3.grid(row = 4, column = 1, padx = 3, pady = 4, sticky = 'w')
 
         rb_rvo4 = tk.Radiobutton(
             master=self,
             text='Positive Control',
             value='pc',
-            variable=rvo)
+            variable=rvo,
+            command = next_available)
 
-        rb_rvo4.pack(padx=3, pady=2)
+        rb_rvo4.grid(row = 5, column = 1, padx = 3, pady = 4, sticky = 'w')
 
 
-        button = tk.Button(self, text="Siguiente", command=self.next_page)
-        button.pack()
+        button = tk.Button(self, text="Siguiente", command=self.next_page, state = 'disabled')
+        button.grid(row = 6, column = 1, padx = 3, pady = 4, sticky = 's')
 
     def update_widgets(self):
         rvo = self.controller.shared_data["rvo"].get()
@@ -1162,4 +1171,6 @@ class PagePC(tk.Frame):
 
 if __name__ == "__main__":
     keep = Keep()
+    keep.title('Protocolo - WGene SARS-CoV-2 RT Detection')
+    keep.resizable(False, False)
     keep.mainloop()
