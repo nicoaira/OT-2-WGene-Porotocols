@@ -6,9 +6,7 @@ import string
 import subprocess
 import os
 from PIL import ImageTk, Image
-import asyncio
-from async_timeout import timeout
-import requests as r
+
 
 
 
@@ -16,6 +14,12 @@ class Keep(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.geometry('')
+        self.title('Protocolo - WGene SARS-CoV-2 RT Detection')
+        self.resizable(False, False)
+        # self.iconbitmap("wl-icono.ico") # solo en windows
+
 
         self.shared_data ={
             "rvo": tk.StringVar(),
@@ -108,6 +112,15 @@ class StartPage(tk.Frame):
             command = next_available)
 
         rb_rvo4.grid(row = 5, column = 1, padx = 3, pady = 4, sticky = 'w')
+
+
+        img = (Image.open('wl-logo.png'))
+        resized_image= img.resize((150, 124), Image.ANTIALIAS)
+        # self.logo = ImageTk.PhotoImage(Image.open('wl-logo.png'))
+        self.logo = ImageTk.PhotoImage(resized_image)
+
+        panel = tk.Label(self, image = self.logo)
+        panel.grid(row = 0, column = 1, padx = 3, pady = 4, rowspan = 1)
 
 
         button = tk.Button(self, text="Siguiente", command=self.next_page, state = 'disabled')
@@ -1171,6 +1184,4 @@ class PagePC(tk.Frame):
 
 if __name__ == "__main__":
     keep = Keep()
-    keep.title('Protocolo - WGene SARS-CoV-2 RT Detection')
-    keep.resizable(False, False)
     keep.mainloop()
