@@ -33,7 +33,8 @@ class Keep(tk.Tk):
             'vel_disp_p300' : tk.StringVar(),
             'vel_asp_p1000' : tk.StringVar(),
             'vel_disp_p1000' : tk.StringVar(),
-            'vel_mov_ot' : tk.StringVar()
+            'vel_mov_ot' : tk.StringVar(),
+            'num_tandas' : tk.StringVar()
 
         }
 
@@ -411,6 +412,7 @@ class Page5X(tk.Frame):
             config['REACTIVO'] = {'Reactivo' : controller.shared_data['rvo'].get()}
             config['NUM_RACKS'] = {'num_racks' : menu_num_racks.get()}
             config['NUM_FALCONS'] = {'num_falcons' : menu_num_falcon.get()}
+            config['NUM_TANDAS'] = {'num_tandas' : 1}
             config['FIRST_TIP'] = {'tip': controller.shared_data['first_tip'].get()}
             config['OT-2-IP'] = {'ip': controller.shared_data['ot_2_ip'].get()}
             config['LAST_TUBE'] = {'tube': controller.shared_data['last_tube'].get()}
@@ -737,6 +739,7 @@ class Page40X(tk.Frame):
             config['REACTIVO'] = {'Reactivo' : controller.shared_data['rvo'].get()}
             config['NUM_RACKS'] = {'num_racks' : menu_num_racks.get()}
             config['NUM_FALCONS'] = {'num_falcons' : menu_num_falcon.get()}
+            config['NUM_TANDAS'] = {'num_tandas' : menu_num_tandas.get()}
             config['FIRST_TIP'] = {'tip': controller.shared_data['first_tip'].get()}
             config['OT-2-IP'] = {'ip': controller.shared_data['ot_2_ip'].get()}
             config['LAST_TUBE'] = {'tube': controller.shared_data['last_tube'].get()}
@@ -793,7 +796,7 @@ class Page40X(tk.Frame):
 
         sub_frame0 = tk.Frame(self)
 
-        label_num_racks = tk.Label(sub_frame0, text='Cantidad de racks a utilizar')
+        label_num_racks = tk.Label(sub_frame0, text='Cantidad de racks por tanda')
         label_num_racks.pack(padx=10)
 
         vlist = list(range(1, 10))
@@ -804,6 +807,21 @@ class Page40X(tk.Frame):
 
         sub_frame0.grid(row=3, column=1, padx=10, pady = 5)
 
+
+        ################## CANTIDAD DE TANDAS ##################
+
+        sub_frame3 = tk.Frame(self)
+
+        label_num_tandas = tk.Label(sub_frame0, text='Cantidad de tandas')
+        label_num_tandas.pack(padx=10)
+
+        tlist = list(range(1, 11))
+        menu_num_tandas = ttk.Combobox(master=sub_frame0, values=tlist, state='readonly', width=3)
+        menu_num_tandas.set(1)
+
+        menu_num_tandas.pack(padx=10, pady=1)
+
+        sub_frame3.grid(row=4, column=1, padx=10, pady = 5)
 
 
 
@@ -976,7 +994,9 @@ class Page40X(tk.Frame):
         boton_select_tip.grid(row=5, column=2, padx=3, pady=3, sticky = 'W')
 
 
-        sub_frame2.grid(row=4, column=1, padx=10, pady = 5)
+        sub_frame2.grid(row=5, column=1, padx=10, pady = 5)
+
+
         ################## BOTON GUARDAR ##################
 
         boton_guardar = tk.Button(self, text ="Guardar", command = guardar)
@@ -1016,6 +1036,7 @@ class PageNFW(tk.Frame):
             config['REACTIVO'] = {'Reactivo' : controller.shared_data['rvo'].get()}
             config['NUM_RACKS'] = {'num_racks' : menu_num_racks.get()}
             config['NUM_FALCONS'] = {'num_falcons' : menu_num_falcon.get()}
+            config['NUM_TANDAS'] = {'num_tandas' : 1}
             config['FIRST_TIP'] = {'tip': controller.shared_data['first_tip'].get()}
             config['OT-2-IP'] = {'ip': controller.shared_data['ot_2_ip'].get()}
             config['LAST_TUBE'] = {'tube': controller.shared_data['last_tube'].get()}
@@ -1341,6 +1362,7 @@ class PagePC(tk.Frame):
             config['REACTIVO'] = {'Reactivo' : controller.shared_data['rvo'].get()}
             config['NUM_RACKS'] = {'num_racks' : menu_num_racks.get()}
             config['NUM_FALCONS'] = {'num_falcons' : menu_num_falcon.get()}
+            config['NUM_TANDAS'] = {'num_tandas' : 1}
             config['FIRST_TIP'] = {'tip': controller.shared_data['first_tip'].get()}
             config['OT-2-IP'] = {'ip': controller.shared_data['ot_2_ip'].get()}
             config['LAST_TUBE'] = {'tube': controller.shared_data['last_tube'].get()}
