@@ -91,9 +91,6 @@ class Keep(tk.Tk):
 
 
 
-
-
-
         ###
 
         self.frames = {
@@ -127,13 +124,15 @@ class StartPage(tk.Frame):
         def next_available():
             button["state"] = "normal"
 
-        label_rvo = tk.Label(self, text='Reactivo a alicuotar:')
+        frame_rvo = tk.Frame(self)
+
+        label_rvo = tk.Label(frame_rvo, text='Reactivo a alicuotar:')
         label_rvo.grid(row = 1, column = 1, padx = 3, pady = 4, sticky = 'w')
 
         rvo = self.controller.shared_data["rvo"]
 
         rb_rvo1 = tk.Radiobutton(
-            master=self,
+            master=frame_rvo,
             text='Master Mix 5x',
             value='5x',
             variable=rvo,
@@ -144,7 +143,7 @@ class StartPage(tk.Frame):
         rb_rvo1.grid(row = 2, column = 1, padx = 3, pady = 4, sticky = 'w')
 
         rb_rvo2 = tk.Radiobutton(
-            master=self,
+            master=frame_rvo,
             text='RT Mix 40x',
             value='40x',
             variable=rvo,
@@ -153,7 +152,7 @@ class StartPage(tk.Frame):
         rb_rvo2.grid(row = 3, column = 1, padx = 3, pady = 4, sticky = 'w')
 
         rb_rvo3 = tk.Radiobutton(
-            master=self,
+            master=frame_rvo,
             text='Nuclease Free Water',
             value='nfw',
             variable=rvo,
@@ -162,7 +161,7 @@ class StartPage(tk.Frame):
         rb_rvo3.grid(row = 4, column = 1, padx = 3, pady = 4, sticky = 'w')
 
         rb_rvo4 = tk.Radiobutton(
-            master=self,
+            master=frame_rvo,
             text='Positive Control',
             value='pc',
             variable=rvo,
@@ -171,13 +170,31 @@ class StartPage(tk.Frame):
         rb_rvo4.grid(row = 5, column = 1, padx = 3, pady = 4, sticky = 'w')
 
 
+        frame_rvo.grid(row = 2, column = 1, padx = 3, pady = 4, sticky = 'w')
+
+
+        ########### LOGO WL ############
+
         img = (Image.open('wl-logo.png'))
         resized_image= img.resize((150, 124), Image.ANTIALIAS)
-        # self.logo = ImageTk.PhotoImage(Image.open('wl-logo.png'))
         self.logo = ImageTk.PhotoImage(resized_image)
 
-        panel = tk.Label(self, image = self.logo)
-        panel.grid(row = 0, column = 1, padx = 3, pady = 4, rowspan = 1)
+        panel_wl = tk.Label(self, image = self.logo)
+        panel_wl.grid(row = 0, column = 1, padx = 3, pady = 4, rowspan = 1)
+
+
+        ########### LOGO CIBIO ############
+
+        img2 = (Image.open('cibio-logo.png'))
+        resized_image2= img2.resize((136, 200), Image.ANTIALIAS)
+        self.logo2 = ImageTk.PhotoImage(resized_image2)
+
+        panel_cibio = tk.Label(self, image = self.logo2)
+        panel_cibio.grid(row = 0, column = 2, padx = 3, pady = 4, rowspan = 1)
+
+
+
+        ############# BOTON SIGUIENTE ##############
 
 
         button = tk.Button(self, text="Siguiente", command=self.next_page, state = 'disabled')
@@ -186,6 +203,10 @@ class StartPage(tk.Frame):
 
 
         ################## BOTON OPCIONES AVANZADAS ##################
+
+
+        frame_botones = tk.Frame(self)
+
 
         def opciones_avanzadas():
 
@@ -305,8 +326,51 @@ class StartPage(tk.Frame):
             popup_oa.resizable(False, False)
             popup_oa.mainloop()
 
-        boton_oa = tk.Button(self, text ="Opciones Avanzadas", command = opciones_avanzadas)
-        boton_oa.grid(row = 2, column = 2, padx = 3, pady = 4)
+        boton_oa = tk.Button(frame_botones, text ="Opciones Avanzadas", command = opciones_avanzadas)
+        boton_oa.grid(row = 1, column = 1, padx = 3, pady = 4)
+
+
+
+    ################## BOTON INTRUCCIONES ##################
+
+        def instrucciones():
+
+
+            popup_info = tk.Toplevel(self)
+            popup_info.wm_title("Manual de instrucciones")
+
+            with open('instrucciones.txt', 'r') as file:
+                manual = file.read()
+
+
+            text_manual = tk.Text(popup_info, width = 110)
+            # scroll = tk.Scrollbar(popup_info)
+            # text_manual.configure(yscrollcommand=scroll.set)
+            text_manual.insert(tk.END, manual)
+            text_manual['state'] = 'disabled'
+            text_manual.grid(row = 1, column = 1, columnspan = 2, padx = 10, pady = 10)
+    
+
+
+            B4 = ttk.Button(popup_info, text="Cerrar", command=popup_info.destroy)
+            B4.grid(row = 2, column = 1, columnspan = 2, padx = 10, pady = 10)
+
+            popup_info.resizable(False, False)
+            popup_info.mainloop()
+
+
+        boton_intrucciones = tk.Button(frame_botones, text ="Instrucciones", command = instrucciones)
+        boton_intrucciones.grid(row = 2, column = 1, padx = 3, pady = 4)
+
+
+        ####### BOTON SALIR #######
+
+        boton_intrucciones = tk.Button(frame_botones, text ="Cerrar", command = controller.destroy)
+        boton_intrucciones.grid(row = 3, column = 1, padx = 3, pady = 4)
+
+
+        frame_botones.grid(row = 2, column = 2, padx = 3, pady = 4, sticky = 's')
+
 
     def update_widgets(self):
         rvo = self.controller.shared_data["rvo"].get()
@@ -346,7 +410,7 @@ class Page5X(tk.Frame):
             config['FIRST_TIP'] = {'tip': controller.shared_data['first_tip'].get()}
             config['OT-2-IP'] = {'ip': controller.shared_data['ot_2_ip'].get()}
             config['LAST_TUBE'] = {'tube': controller.shared_data['last_tube'].get()}
-            config['VEL_P300'] = {'asp': shared_data['vel_asp_p300'].get()}
+            config['VEL_P300'] = {'asp': controller.shared_data['vel_asp_p300'].get()}
             config['VEL_P300'] = {'disp': controller.shared_data['vel_disp_p300'].get()}
             config['VEL_P1000'] = {'asp': controller.shared_data['vel_asp_p1000'].get()}
             config['VEL_P1000'] = {'disp': controller.shared_data['vel_disp_p1000'].get()}
@@ -642,9 +706,82 @@ class Page5X(tk.Frame):
 
 class Page40X(tk.Frame):
 
+
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
+
+        def popup_advertencia(title, msg):
+
+
+            popup_advertencia = tk.Toplevel(self)
+            popup_advertencia.wm_title(title)
+            label = ttk.Label(popup_advertencia, text=msg)
+            label.pack(side="top", fill="x", pady=10, padx=20)
+
+            B2 = ttk.Button(popup_advertencia, text="Cerrar", command=popup_advertencia.destroy)
+            B2.pack(padx = 10, pady = 5)
+
+            popup_advertencia.resizable(False, False)
+            popup_advertencia.mainloop()
+
+
+        def guardar():
+
+            config = configparser.ConfigParser()
+
+            config['REACTIVO'] = {'Reactivo' : controller.shared_data['rvo'].get()}
+            config['NUM_RACKS'] = {'num_racks' : menu_num_racks.get()}
+            config['NUM_FALCONS'] = {'num_falcons' : menu_num_falcon.get()}
+            config['FIRST_TIP'] = {'tip': controller.shared_data['first_tip'].get()}
+            config['OT-2-IP'] = {'ip': controller.shared_data['ot_2_ip'].get()}
+            config['LAST_TUBE'] = {'tube': controller.shared_data['last_tube'].get()}
+            config['VEL_P300'] = {'asp': shared_data['vel_asp_p300'].get()}
+            config['VEL_P300'] = {'disp': controller.shared_data['vel_disp_p300'].get()}
+            config['VEL_P1000'] = {'asp': controller.shared_data['vel_asp_p1000'].get()}
+            config['VEL_P1000'] = {'disp': controller.shared_data['vel_disp_p1000'].get()}
+            config['VEL_OT-2'] = {'vel_mov_ot': controller.shared_data['vel_mov_ot'].get()}
+
+
+            falcons_dict = {}
+            a = 0
+            for i in range(3):
+                for j in string.ascii_uppercase[:2]:
+                    if falcons[a].get() != "":
+                        falcons_dict[j+str(i+1)] = falcons[a].get()
+                    else:
+                        falcons_dict[j + str(i + 1)] = "0"
+                    a += 1
+
+            config['VOL_FALCONS'] = falcons_dict
+
+            with open('../config.ini', 'w') as configfile:
+                config.write(configfile)
+
+            #### Carga en OT-2
+
+            OT2_IP = controller.shared_data['ot_2_ip'].get()
+
+            upload_script = ["scp",
+                             "-i",
+                             "ot2_ssh_key",
+                             "../config.ini",
+                             "root@" + OT2_IP + ":/data/user_storage"]
+
+
+            try:                 
+                p = subprocess.check_call(upload_script, timeout = 2)
+                popup_advertencia("Atencion!","Configuracion guardada exitosamente!")
+
+
+            except subprocess.TimeoutExpired:
+                popup_advertencia("Error!","No se pudo guardar la configuracion!")
+
+
+            else:
+                popup_advertencia("Error!","Ha ocurrido un error inesperado")
+
+                
 
 
         def seleccion_vol_falcons(event):
@@ -655,9 +792,9 @@ class Page40X(tk.Frame):
                 if i < num_falcon:
                     falcons[i].config(state='normal')
                     falcons[i].delete(0, tk.END)
-                    falcons[i].insert(0, 44)
+                    falcons[i].insert(0, 50)
                 else:
-                    falcons[i].delete(0, 4)
+                    falcons[i].delete(0, tk.END)
                     falcons[i].config(state='disabled')
 
         ################## CANTIDAD DE RACKS A USAR ##################
@@ -683,24 +820,14 @@ class Page40X(tk.Frame):
 
         sub_frame1 = tk.Frame(self)
 
-
         label_falcons = tk.Label(sub_frame1, text='Cantidad de tubos 2,5 mL RT-Mix a alicuotar')
         label_falcons.pack(padx=10)
 
         falcon_list = list(range(1, 29))
         menu_num_falcon = ttk.Combobox(master=sub_frame1, values=falcon_list, state='readonly', width=3)
-        menu_num_falcon.bind('<<ComboboxSelected>>', seleccion_vol_falcons)
         menu_num_falcon.pack(padx=10, pady=10)
 
-
-        sub_frame1_1 = tk.Frame(self)
-
-
-        falcons = []
-
-
         sub_frame1.grid(row=1, column=1, padx=10, pady = 5)
-        sub_frame1_1.grid(row=2, column=1, padx=10, pady = 5)
 
         ################## SELECCION DEL ULTIMO TUBO ##################
 
@@ -751,7 +878,7 @@ class Page40X(tk.Frame):
                     tube = tk.Radiobutton(
                         master=popup,
                         value=string.ascii_uppercase[j] + str(i + 1),
-                        variable=self.controller.shared_data["last_tube"])
+                        variable=controller.shared_data["last_tube"])
 
                     tubes_list.append(tube)
 
@@ -802,7 +929,7 @@ class Page40X(tk.Frame):
         ################## SELECCION DEL PRIMER TIP ##################
 
         def popup_select_tip():
-            first_tip = tk.StringVar()
+            first_tip = controller.shared_data['first_tip']
 
             def guardar_seleccion_tip():
                 entry_primer_tip.configure(state='normal')
@@ -860,11 +987,12 @@ class Page40X(tk.Frame):
 
         sub_frame3.grid(row=5, column=1, padx=10, pady = 5)
 
+        ################## BOTON GUARDAR ##################
+
+        boton_guardar = tk.Button(self, text ="Guardar", command = guardar)
+        boton_guardar.grid(row=6, column=1, padx=10, pady = 5)
 
 
-    def guardar(self):
-        self.controller.shared_data["num_racks"] = menu_num_racks.get()
-        self.controller.shared_data["num_falcons"] = menu_num_racks.get()
 
 
     def update_widgets(self):
@@ -876,6 +1004,78 @@ class PageNFW(tk.Frame):
         super().__init__(parent)
         self.controller = controller
 
+        def popup_advertencia(title, msg):
+
+
+            popup_advertencia = tk.Toplevel(self)
+            popup_advertencia.wm_title(title)
+            label = ttk.Label(popup_advertencia, text=msg)
+            label.pack(side="top", fill="x", pady=10, padx=20)
+
+            B2 = ttk.Button(popup_advertencia, text="Cerrar", command=popup_advertencia.destroy)
+            B2.pack(padx = 10, pady = 5)
+
+            popup_advertencia.resizable(False, False)
+            popup_advertencia.mainloop()
+
+
+        def guardar():
+
+            config = configparser.ConfigParser()
+
+            config['REACTIVO'] = {'Reactivo' : controller.shared_data['rvo'].get()}
+            config['NUM_RACKS'] = {'num_racks' : menu_num_racks.get()}
+            config['NUM_FALCONS'] = {'num_falcons' : menu_num_falcon.get()}
+            config['FIRST_TIP'] = {'tip': controller.shared_data['first_tip'].get()}
+            config['OT-2-IP'] = {'ip': controller.shared_data['ot_2_ip'].get()}
+            config['LAST_TUBE'] = {'tube': controller.shared_data['last_tube'].get()}
+            config['VEL_P300'] = {'asp': controller.shared_data['vel_asp_p300'].get()}
+            config['VEL_P300'] = {'disp': controller.shared_data['vel_disp_p300'].get()}
+            config['VEL_P1000'] = {'asp': controller.shared_data['vel_asp_p1000'].get()}
+            config['VEL_P1000'] = {'disp': controller.shared_data['vel_disp_p1000'].get()}
+            config['VEL_OT-2'] = {'vel_mov_ot': controller.shared_data['vel_mov_ot'].get()}
+
+
+            falcons_dict = {}
+            a = 0
+            for i in range(3):
+                for j in string.ascii_uppercase[:2]:
+                    if falcons[a].get() != "":
+                        falcons_dict[j+str(i+1)] = falcons[a].get()
+                    else:
+                        falcons_dict[j + str(i + 1)] = "0"
+                    a += 1
+
+            config['VOL_FALCONS'] = falcons_dict
+
+            with open('../config.ini', 'w') as configfile:
+                config.write(configfile)
+
+            #### Carga en OT-2
+
+            OT2_IP = controller.shared_data['ot_2_ip'].get()
+
+            upload_script = ["scp",
+                             "-i",
+                             "ot2_ssh_key",
+                             "../config.ini",
+                             "root@" + OT2_IP + ":/data/user_storage"]
+
+
+            try:                 
+                p = subprocess.check_call(upload_script, timeout = 2)
+                popup_advertencia("Atencion!","Configuracion guardada exitosamente!")
+
+
+            except subprocess.TimeoutExpired:
+                popup_advertencia("Error!","No se pudo guardar la configuracion!")
+
+
+            else:
+                popup_advertencia("Error!","Ha ocurrido un error inesperado")
+
+                
+
 
         def seleccion_vol_falcons(event):
 
@@ -885,7 +1085,7 @@ class PageNFW(tk.Frame):
                 if i < num_falcon:
                     falcons[i].config(state='normal')
                     falcons[i].delete(0, tk.END)
-                    falcons[i].insert(0, 44)
+                    falcons[i].insert(0, 50)
                 else:
                     falcons[i].delete(0, tk.END)
                     falcons[i].config(state='disabled')
@@ -946,7 +1146,7 @@ class PageNFW(tk.Frame):
 
             for j in range(1, 5, 2):
                 volfalcon = tk.Entry(sub_frame1_1, width=4, state='disabled')
-                volfalcon.insert(0, '44')
+                volfalcon.insert(0, '50')
                 falcons.append(volfalcon)
                 volfalcon.grid(row=j, column=i, padx=10)
 
@@ -1003,7 +1203,7 @@ class PageNFW(tk.Frame):
                     tube = tk.Radiobutton(
                         master=popup,
                         value=string.ascii_uppercase[j] + str(i + 1),
-                        variable=self.controller.shared_data["last_tube"])
+                        variable=controller.shared_data["last_tube"])
 
                     tubes_list.append(tube)
 
@@ -1054,7 +1254,7 @@ class PageNFW(tk.Frame):
         ################## SELECCION DEL PRIMER TIP ##################
 
         def popup_select_tip():
-            first_tip = tk.StringVar()
+            first_tip = controller.shared_data['first_tip']
 
             def guardar_seleccion_tip():
                 entry_primer_tip.configure(state='normal')
@@ -1112,13 +1312,17 @@ class PageNFW(tk.Frame):
 
         sub_frame3.grid(row=5, column=1, padx=10, pady = 5)
 
-    def guardar(self):
-        self.controller.shared_data["num_racks"] = menu_num_racks.get()
-        self.controller.shared_data["num_falcons"] = menu_num_racks.get()
+        ################## BOTON GUARDAR ##################
+
+        boton_guardar = tk.Button(self, text ="Guardar", command = guardar)
+        boton_guardar.grid(row=6, column=1, padx=10, pady = 5)
+
+
 
 
     def update_widgets(self):
         pass
+
 
 class PagePC(tk.Frame):
 
@@ -1126,6 +1330,78 @@ class PagePC(tk.Frame):
         super().__init__(parent)
         self.controller = controller
 
+        def popup_advertencia(title, msg):
+
+
+            popup_advertencia = tk.Toplevel(self)
+            popup_advertencia.wm_title(title)
+            label = ttk.Label(popup_advertencia, text=msg)
+            label.pack(side="top", fill="x", pady=10, padx=20)
+
+            B2 = ttk.Button(popup_advertencia, text="Cerrar", command=popup_advertencia.destroy)
+            B2.pack(padx = 10, pady = 5)
+
+            popup_advertencia.resizable(False, False)
+            popup_advertencia.mainloop()
+
+
+        def guardar():
+
+            config = configparser.ConfigParser()
+
+            config['REACTIVO'] = {'Reactivo' : controller.shared_data['rvo'].get()}
+            config['NUM_RACKS'] = {'num_racks' : menu_num_racks.get()}
+            config['NUM_FALCONS'] = {'num_falcons' : menu_num_falcon.get()}
+            config['FIRST_TIP'] = {'tip': controller.shared_data['first_tip'].get()}
+            config['OT-2-IP'] = {'ip': controller.shared_data['ot_2_ip'].get()}
+            config['LAST_TUBE'] = {'tube': controller.shared_data['last_tube'].get()}
+            config['VEL_P300'] = {'asp': controller.shared_data['vel_asp_p300'].get()}
+            config['VEL_P300'] = {'disp': controller.shared_data['vel_disp_p300'].get()}
+            config['VEL_P1000'] = {'asp': controller.shared_data['vel_asp_p1000'].get()}
+            config['VEL_P1000'] = {'disp': controller.shared_data['vel_disp_p1000'].get()}
+            config['VEL_OT-2'] = {'vel_mov_ot': controller.shared_data['vel_mov_ot'].get()}
+
+
+            falcons_dict = {}
+            a = 0
+            for i in range(3):
+                for j in string.ascii_uppercase[:2]:
+                    if falcons[a].get() != "":
+                        falcons_dict[j+str(i+1)] = falcons[a].get()
+                    else:
+                        falcons_dict[j + str(i + 1)] = "0"
+                    a += 1
+
+            config['VOL_FALCONS'] = falcons_dict
+
+            with open('../config.ini', 'w') as configfile:
+                config.write(configfile)
+
+            #### Carga en OT-2
+
+            OT2_IP = controller.shared_data['ot_2_ip'].get()
+
+            upload_script = ["scp",
+                             "-i",
+                             "ot2_ssh_key",
+                             "../config.ini",
+                             "root@" + OT2_IP + ":/data/user_storage"]
+
+
+            try:                 
+                p = subprocess.check_call(upload_script, timeout = 2)
+                popup_advertencia("Atencion!","Configuracion guardada exitosamente!")
+
+
+            except subprocess.TimeoutExpired:
+                popup_advertencia("Error!","No se pudo guardar la configuracion!")
+
+
+            else:
+                popup_advertencia("Error!","Ha ocurrido un error inesperado")
+
+                
+
 
         def seleccion_vol_falcons(event):
 
@@ -1135,7 +1411,7 @@ class PagePC(tk.Frame):
                 if i < num_falcon:
                     falcons[i].config(state='normal')
                     falcons[i].delete(0, tk.END)
-                    falcons[i].insert(0, 44)
+                    falcons[i].insert(0, 50)
                 else:
                     falcons[i].delete(0, tk.END)
                     falcons[i].config(state='disabled')
@@ -1196,7 +1472,7 @@ class PagePC(tk.Frame):
 
             for j in range(1, 5, 2):
                 volfalcon = tk.Entry(sub_frame1_1, width=4, state='disabled')
-                volfalcon.insert(0, '44')
+                volfalcon.insert(0, '50')
                 falcons.append(volfalcon)
                 volfalcon.grid(row=j, column=i, padx=10)
 
@@ -1253,7 +1529,7 @@ class PagePC(tk.Frame):
                     tube = tk.Radiobutton(
                         master=popup,
                         value=string.ascii_uppercase[j] + str(i + 1),
-                        variable=self.controller.shared_data["last_tube"])
+                        variable=controller.shared_data["last_tube"])
 
                     tubes_list.append(tube)
 
@@ -1304,7 +1580,7 @@ class PagePC(tk.Frame):
         ################## SELECCION DEL PRIMER TIP ##################
 
         def popup_select_tip():
-            first_tip = tk.StringVar()
+            first_tip = controller.shared_data['first_tip']
 
             def guardar_seleccion_tip():
                 entry_primer_tip.configure(state='normal')
@@ -1362,13 +1638,17 @@ class PagePC(tk.Frame):
 
         sub_frame3.grid(row=5, column=1, padx=10, pady = 5)
 
-    def guardar(self):
-        self.controller.shared_data["num_racks"] = menu_num_racks.get()
-        self.controller.shared_data["num_falcons"] = menu_num_racks.get()
+        ################## BOTON GUARDAR ##################
+
+        boton_guardar = tk.Button(self, text ="Guardar", command = guardar)
+        boton_guardar.grid(row=6, column=1, padx=10, pady = 5)
+
+
 
 
     def update_widgets(self):
         pass
+
 
 if __name__ == "__main__":
     keep = Keep()
