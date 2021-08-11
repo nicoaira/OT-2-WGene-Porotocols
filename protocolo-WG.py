@@ -156,126 +156,153 @@ def run(protocol: protocol_api.ProtocolContext):
 
 
 
-    for i in range(num_racks):
 
-        c = 0
+    tandas = 10
 
-        wells_per_rack = len(racks[i].wells())  # para el rack nuestro seria 40
-
-        for falcon, vol in falcons.items():
-
-            print('FALCON:', falcon, '- VOLUMEN:', vol)
-
-            # Se busca el primer falcon que tenga volumen
-            if vol < vol_muerto:
-                continue
-                # Si el volumen es menor al volumen muerto busca el siguiente falcon
-            else:
-                pass
+    for t in range(tandas):
 
 
-            # Configuracion de la altura inicial del tip
-            # Toma como punto limite el cono inferior del falcon (aprox 3750uL)
-            # A partir de ahi toma desde el fondo
+        for i in range(num_racks):
 
-            if vol > vol_limite:
-                pipette.well_bottom_clearance.aspirate = altura_base + ((vol-vol_limite)/1000) * rate_mm_mL
-            else:
-                pipette.well_bottom_clearance.aspirate = .5
+            c = 0
 
+            wells_per_rack = len(racks[i].wells())  # para el rack nuestro seria 40
+
+            for falcon, vol in falcons.items():
 
 
-            while c < wells_per_rack:
-
-
-                if vol_pipeta >= vol_dispensar:
-
-                    pipette.aspirate(vol_pipeta, plate[falcon])
-
-
-
-                    for m in range(vol_pipeta//vol_dispensar):
-
-                        # Chequea que c no genere un OutOfIndex
-                        if c < wells_per_rack:
-                            pipette.dispense(vol_dispensar, racks[i].wells()[c].bottom(7), rate = 0.5)
-                            pipette.touch_tip(racks[i].wells()[c], radius = 0.70, v_offset = -15 )
-                            pipette.default_speed = 80 * factor_vel_mov_ot
-                            protocol.delay(1.2)
-
-                            if racks[i].wells()[c] == last_tube_obj:
-                                c = wells_per_rack
-                            else:
-                                c += 1
-                        else:
-                            pipette.blow_out(plate[falcon])
-                            break
-
-                    pipette.default_speed = 300 * factor_vel_mov_ot # controla la velocidad general del OT2, predeterminada 400mm/s
-
-                    pipette.dispense(vol_pipeta%vol_dispensar, plate[falcon].bottom(pipette.well_bottom_clearance.aspirate+7), rate = 0.5)
-                    protocol.delay(1.2)
-                    pipette.blow_out(plate[falcon].bottom(pipette.well_bottom_clearance.aspirate+7))
-
-
-                    # Volumen utilizado en uL
-                    vol_usado = vol_dispensar*(vol_pipeta//vol_dispensar)
-
-
-                    # Se descuenta el volumen usado del falcon
-                    falcons[falcon] -= vol_usado
-                    protocol.comment(str(falcons[falcon]))
-
-
-
+                # Se busca el primer falcon que tenga volumen
+                if vol < vol_muerto:
+                    continue
+                    # Si el volumen es menor al volumen muerto busca el siguiente falcon
                 else:
-
-                    pasos = math.ceil(vol_dispensar/vol_pipeta)
-
+                    pass
 
 
+                # Configuracion de la altura inicial del tip
+                # Toma como punto limite el cono inferior del falcon (aprox 3750uL)
+                # A partir de ahi toma desde el fondo
 
-                    for m in range(pasos):
-
-                        # Chequeo del volumen del falcon antes de repetir cada paso
-                        if falcons[falcon] < vol_muerto:
-                            break
-                        else:
-                            pipette.aspirate(vol_pipeta, plate[falcon])
-                            pipette.dispense(vol_dispensar/pasos, racks[i].wells()[c].bottom(10))
-                            pipette.dispense(vol_pipeta % (vol_dispensar / pasos), plate[falcon].top())
-
-
-
-
-                    # Volumen utilizado en uL
-                    vol_usado = vol_dispensar*pasos
-
-                    # Se descuenta el volumen usado del falcon
-                    falcons[falcon] -= vol_usado
-                    print('Volumen en el falcon', falcon, '>>', falcons[falcon])
-
-                    if racks[i].wells()[c] == last_tube_obj:
-                        break
-                    else:
-                        c += 1
-
-
-
-                if pipette.well_bottom_clearance.aspirate > altura_limite:
-                    pipette.well_bottom_clearance.aspirate -= rate_mm_mL * vol_usado/1000
+                if vol > vol_limite:
+                    pipette.well_bottom_clearance.aspirate = altura_base + ((vol-vol_limite)/1000) * rate_mm_mL
                 else:
                     pipette.well_bottom_clearance.aspirate = .5
 
 
-                # Chequeo del volumen del falcon antes de repetir cada paso
-                if falcons[falcon] < vol_muerto:
-                    break
-                else:
-                    continue
 
-            # A los 18 mm se va a .5. En la documentacion hay acalara que hay que tener
-            # cuidado con que tome valores negativos pq se estrella el tip.
+                while c < wells_per_rack:
+
+
+                    if vol_pipeta >= vol_dispensar:
+
+                        pipette.aspirate(vol_pipeta, plate[falcon])
+
+
+
+                        for m in range(vol_pipeta//vol_dispensar):
+
+                            if c < wells_per_rack:
+                                pipette.dispense(vol_dispensar, racks[i].wells()[c].bottom(7), rate = 0.5)
+                                pipette.touch_tip(racks[i].wells()[c], radius = 0.70, v_offset = -15 )
+                                pipette.default_speed = 80 * factor_vel_mov_ot
+                                protocol.delay(1.2)
+
+                                if racks[i].wells()[c] == last_tube_obj:
+                                    c = wells_per_rack
+                                else:
+                                    c += 1
+                            else:
+                                pipette.blow_out(plate[falcon])
+                                break
+
+                        pipette.default_speed = 300 * factor_vel_mov_ot # controla la velocidad general del OT2, predeterminada 400mm/s
+
+                        pipette.dispense(vol_pipeta%vol_dispensar, plate[falcon].bottom(pipette.well_bottom_clearance.aspirate+7), rate = 0.5)
+                        protocol.delay(1.2)
+                        pipette.blow_out(plate[falcon].bottom(pipette.well_bottom_clearance.aspirate+7))
+
+
+                        # Volumen utilizado en uL
+                        vol_usado = vol_dispensar*(vol_pipeta//vol_dispensar)
+
+
+                        # Se descuenta el volumen usado del falcon
+                        falcons[falcon] -= vol_usado
+                        protocol.comment(str(falcons[falcon]))
+
+
+
+                    else:
+
+                        pasos = math.ceil(vol_dispensar/vol_pipeta)
+
+
+
+
+                        for m in range(pasos):
+
+                            # Chequeo del volumen del falcon antes de repetir cada paso
+                            if falcons[falcon] < vol_muerto:
+                                break
+                            else:
+                                pipette.aspirate(vol_pipeta, plate[falcon])
+                                pipette.dispense(vol_dispensar/pasos, racks[i].wells()[c].bottom(10))
+                                pipette.dispense(vol_pipeta % (vol_dispensar / pasos), plate[falcon].top())
+
+
+
+
+                        # Volumen utilizado en uL
+                        vol_usado = vol_dispensar*pasos
+
+                        # Se descuenta el volumen usado del falcon
+                        falcons[falcon] -= vol_usado
+                        print('Volumen en el falcon', falcon, '>>', falcons[falcon])
+
+                        if racks[i].wells()[c] == last_tube_obj:
+                            break
+                        else:
+                            c += 1
+
+
+
+                    if pipette.well_bottom_clearance.aspirate > altura_limite:
+                        pipette.well_bottom_clearance.aspirate -= rate_mm_mL * vol_usado/1000
+                    else:
+                        pipette.well_bottom_clearance.aspirate = .5
+
+
+                    # Chequeo del volumen del falcon antes de repetir cada paso
+                    if falcons[falcon] < vol_muerto:
+                        break
+                    else:
+                        continue
+
+        for l in range(5):
+            protocol.set_rail_lights(False)
+            protocol.delay(0.5)
+            protocol.set_rail_lights(True)
+
+
+        if any([True if v > vol_muerto else False for v in falcons.values()]):
+            pass
+
+        else:
+            protocol.comment('No queda mas volumen para asipirar!')
+            protocol.comment('Terminando protocolo!')
+            protocol.cleanup()
+            break
+
+        mensaje_tanda = 'Tanda ' + str(t+1) + '/' + str(tandas) + ' completada!'
+        mensaje_carga = 'Cargue los '+str(num_racks)+' racks nuevos y haga click en "Continue"'
+
+
+
+
+        protocol.comment(msg = mensaje_tanda)
+        protocol.pause(msg = mensaje_carga)
+
+
 
     # pipette.drop_tip()
     pipette.return_tip()
