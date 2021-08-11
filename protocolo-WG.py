@@ -19,8 +19,8 @@ metadata = {
 # Info de configuracion
 
 config = configparser.ConfigParser()
-config.read('config.ini')
-# config.read('/data/user_storage/config.ini')
+# config.read('config.ini')
+config.read('/data/user_storage/config.ini')
 rvo = config.get('REACTIVO', 'reactivo')
 num_racks = int(config.get('NUM_RACKS', 'num_racks'))
 primer_tip = config.get('FIRST_TIP', 'tip')
@@ -40,7 +40,7 @@ elif rvo == '40x':
     falcons = {}
     for i in string.ascii_uppercase[:4]:
         for j in range(1,8):
-            falcons[i+str(j)] = 1500
+            falcons[i+str(j)] = 2500
 
 
 
@@ -65,13 +65,15 @@ elif rvo == 'pc':
 
 if rvo == '5x' or rvo == 'nfw' or rvo == 'pc':
     vol_limite = 3750  # Vol a partir del cual toma desde la base
-    altura_base = 16
+    altura_base = 12
+    altura_limite = 19.1
     rate_mm_mL = 1.86
     vol_muerto = 200 + vol_dispensar*1.1
 
 elif rvo == '40x':
-    vol_limite = 300 # Vol a partir del cual toma desde la base
-    altura_base = 8
+    vol_limite = 200 # Vol a partir del cual toma desde la base
+    altura_base = 2
+    altura_limite = 12
     rate_mm_mL = 7.57
     vol_muerto = vol_dispensar*1.1
 
@@ -129,9 +131,15 @@ def run(protocol: protocol_api.ProtocolContext):
     last_tube_obj = racks[-1].wells_by_name()[last_tube]
     print('ULTIMO TUBO>>>',last_tube_obj)
 
+
+    
+
     ##################### PROTOCOLO #####################
 
-
+    pipette.default_speed = 300 #controla la velocidad general del OT2, predeterminada 400mm/s
+    pipette.flow_rate.aspirate = 150 #controla la velocidad de aspiración, predeterminada
+    # pipette.flow_rate.dispense = 150  # controla la velocidad de dispensado, predeterminada
+    pipette.flow_rate.blow_out = 20  # controla la velocidad de expulción de flujo, predeterminada
     pipette.pick_up_tip(tiprack[primer_tip])
 
 
@@ -172,11 +180,16 @@ def run(protocol: protocol_api.ProtocolContext):
 
                     pipette.aspirate(vol_pipeta, plate[falcon])
 
+
+
                     for m in range(vol_pipeta//vol_dispensar):
 
                         # Chequea que c no genere un OutOfIndex
                         if c < wells_per_rack:
-                            pipette.dispense(vol_dispensar, racks[i].wells()[c].bottom(10))
+                            pipette.dispense(vol_dispensar, racks[i].wells()[c].bottom(7), rate = 0.5)
+                            pipette.touch_tip(racks[i].wells()[c], radius = 0.70, v_offset = -15 )
+                            pipette.default_speed = 80  # controla la velocidad general del OT2, predeterminada 400mm/s
+                            protocol.delay(1.2)
 
                             if racks[i].wells()[c] == last_tube_obj:
                                 c = wells_per_rack
@@ -186,8 +199,11 @@ def run(protocol: protocol_api.ProtocolContext):
                             pipette.blow_out(plate[falcon])
                             break
 
+                    pipette.default_speed = 300  # controla la velocidad general del OT2, predeterminada 400mm/s
 
-                    pipette.dispense(vol_pipeta%vol_dispensar, plate[falcon].top() )
+                    pipette.dispense(vol_pipeta%vol_dispensar, plate[falcon].bottom(pipette.well_bottom_clearance.aspirate+7), rate = 0.5)
+                    protocol.delay(1.2)
+                    pipette.blow_out(plate[falcon].bottom(pipette.well_bottom_clearance.aspirate+7))
 
 
                     # Volumen utilizado en uL
@@ -196,6 +212,7 @@ def run(protocol: protocol_api.ProtocolContext):
 
                     # Se descuenta el volumen usado del falcon
                     falcons[falcon] -= vol_usado
+                    protocol.comment(str(falcons[falcon]))
 
 
 
@@ -203,21 +220,24 @@ def run(protocol: protocol_api.ProtocolContext):
 
                     pasos = math.ceil(vol_dispensar/vol_pipeta)
 
-                    pipette.aspirate(vol_pipeta, plate[falcon])
 
 
 
                     for m in range(pasos):
 
+                        # Chequeo del volumen del falcon antes de repetir cada paso
+                        if falcons[falcon] < vol_muerto:
+                            break
+                        else:
+                            pipette.aspirate(vol_pipeta, plate[falcon])
                             pipette.dispense(vol_dispensar/pasos, racks[i].wells()[c].bottom(10))
-                            # Se descuenta el volumen usado del falcon
-                        
+                            pipette.dispense(vol_pipeta % (vol_dispensar / pasos), plate[falcon].top())
 
-                    pipette.dispense(vol_pipeta%(vol_dispensar/pasos), plate[falcon].top() )
+
 
 
                     # Volumen utilizado en uL
-                    vol_usado = vol_dispensar
+                    vol_usado = vol_dispensar*pasos
 
                     # Se descuenta el volumen usado del falcon
                     falcons[falcon] -= vol_usado
@@ -230,7 +250,7 @@ def run(protocol: protocol_api.ProtocolContext):
 
 
 
-                if pipette.well_bottom_clearance.aspirate > 19.1:
+                if pipette.well_bottom_clearance.aspirate > altura_limite:
                     pipette.well_bottom_clearance.aspirate -= rate_mm_mL * vol_usado/1000
                 else:
                     pipette.well_bottom_clearance.aspirate = .5
