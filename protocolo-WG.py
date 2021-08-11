@@ -19,12 +19,23 @@ metadata = {
 # Info de configuracion
 
 config = configparser.ConfigParser()
-# config.read('config.ini')
 config.read('/data/user_storage/config.ini')
 rvo = config.get('REACTIVO', 'reactivo')
 num_racks = int(config.get('NUM_RACKS', 'num_racks'))
 primer_tip = config.get('FIRST_TIP', 'tip')
 last_tube = config.get('LAST_TUBE', 'tube')
+
+if rvo == '5x' or rvo == 'nfw':
+    vel_asp= int(config.get('VEL_P1000', 'asp'))
+    vel_disp = int(config.get('VEL_P1000', 'disp'))
+
+elif rvo == 'pc' or rvo == '40x':
+    vel_asp = int(config.get('VEL_P300', 'asp'))
+    vel_disp = int(config.get('VEL_P300', 'disp'))
+
+
+factor_vel_mov_ot = int(config.get('VEL_OT-2', 'vel_mov_ot'))
+
 
 #### Carga de los tubos con el reactivo a alicuotar
 
@@ -136,9 +147,9 @@ def run(protocol: protocol_api.ProtocolContext):
 
     ##################### PROTOCOLO #####################
 
-    pipette.default_speed = 300 #controla la velocidad general del OT2, predeterminada 400mm/s
-    pipette.flow_rate.aspirate = 150 #controla la velocidad de aspiración, predeterminada
-    # pipette.flow_rate.dispense = 150  # controla la velocidad de dispensado, predeterminada
+    pipette.default_speed = 300 * factor_vel_mov_ot #controla la velocidad general del OT2, predeterminada 400mm/s
+    pipette.flow_rate.aspirate = vel_asp #controla la velocidad de aspiración, predeterminada
+    pipette.flow_rate.dispense = vel_disp  # controla la velocidad de dispensado, predeterminada
     pipette.flow_rate.blow_out = 20  # controla la velocidad de expulción de flujo, predeterminada
     pipette.pick_up_tip(tiprack[primer_tip])
 
@@ -188,7 +199,7 @@ def run(protocol: protocol_api.ProtocolContext):
                         if c < wells_per_rack:
                             pipette.dispense(vol_dispensar, racks[i].wells()[c].bottom(7), rate = 0.5)
                             pipette.touch_tip(racks[i].wells()[c], radius = 0.70, v_offset = -15 )
-                            pipette.default_speed = 80  # controla la velocidad general del OT2, predeterminada 400mm/s
+                            pipette.default_speed = 80 * factor_vel_mov_ot
                             protocol.delay(1.2)
 
                             if racks[i].wells()[c] == last_tube_obj:
@@ -199,7 +210,7 @@ def run(protocol: protocol_api.ProtocolContext):
                             pipette.blow_out(plate[falcon])
                             break
 
-                    pipette.default_speed = 300  # controla la velocidad general del OT2, predeterminada 400mm/s
+                    pipette.default_speed = 300 * factor_vel_mov_ot # controla la velocidad general del OT2, predeterminada 400mm/s
 
                     pipette.dispense(vol_pipeta%vol_dispensar, plate[falcon].bottom(pipette.well_bottom_clearance.aspirate+7), rate = 0.5)
                     protocol.delay(1.2)
