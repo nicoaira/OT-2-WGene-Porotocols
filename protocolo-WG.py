@@ -19,7 +19,8 @@ metadata = {
 # Info de configuracion
 
 config = configparser.ConfigParser()
-config.read('/data/user_storage/config.ini')
+# config.read('/data/user_storage/config.ini')
+config.read('config.ini')
 rvo = config.get('REACTIVO', 'reactivo')
 num_racks = int(config.get('NUM_RACKS', 'num_racks'))
 primer_tip = config.get('FIRST_TIP', 'tip')
@@ -34,7 +35,7 @@ elif rvo == 'pc' or rvo == '40x':
     vel_disp = int(config.get('VEL_P300', 'disp'))
 
 
-factor_vel_mov_ot = int(config.get('VEL_OT-2', 'vel_mov_ot'))
+factor_vel_mov_ot = float(config.get('VEL_OT-2', 'vel_mov_ot'))
 
 
 #### Carga de los tubos con el reactivo a alicuotar
