@@ -67,7 +67,7 @@ class Keep(tk.Tk):
             self.shared_data['vel_disp_p300'].set(config.get('VEL_P300', 'disp'))
 
         except:
-            self.shared_data['vel_disp_p300'].set('')
+            self.shared_data['vel_disp_p300'].set('150')
 
         try:
             self.shared_data['vel_asp_p1000'].set(config.get('VEL_P1000', 'asp'))
@@ -85,7 +85,7 @@ class Keep(tk.Tk):
             self.shared_data['vel_mov_ot'].set(config.get('VEL_OT-2', 'vel_mov_ot'))
 
         except:
-            self.shared_data['vel_mov_ot'].set('')
+            self.shared_data['vel_mov_ot'].set('1')
 
 
 
@@ -217,7 +217,7 @@ class StartPage(tk.Frame):
                 self.controller.shared_data['vel_disp_p300'].set(entry_vel_disp_p300.get())
                 self.controller.shared_data['vel_asp_p1000'].set(entry_vel_asp_p1000.get())
                 self.controller.shared_data['vel_disp_p1000'].set(entry_vel_disp_p1000.get())
-                self.controller.shared_data['vel_mov_ot'].set(entry_vel_ot_2.get())
+                self.controller.shared_data['vel_mov_ot'].set(scale_vel.get())
 
 
                 try:
@@ -311,11 +311,15 @@ class StartPage(tk.Frame):
             label_config_ot_2 = ttk.Label(frame_vel_ot_2, text='Configuracion movimiento OT-2')
 
             label_vel_ot_2 = ttk.Label(frame_vel_ot_2, text='Velocidad de movimiento del robot (mm/s):')
-            entry_vel_ot_2 = tk.Entry(frame_vel_ot_2, width = 5)
-            entry_vel_ot_2.insert(0, self.controller.shared_data['vel_mov_ot'].get())
+            # entry_vel_ot_2 = tk.Entry(frame_vel_ot_2, width = 5)
+            # entry_vel_ot_2.insert(0, self.controller.shared_data['vel_mov_ot'].get())
             label_config_ot_2.grid(row = 1, column = 1, padx = 10, pady = 10, columnspan = 2)
-            label_vel_ot_2.grid(row = 2, column = 1, padx = 3, pady = 10)
-            entry_vel_ot_2.grid(row = 2, column = 2, padx = 3, pady = 10)
+            # label_vel_ot_2.grid(row = 2, column = 1, padx = 3, pady = 10)
+            # entry_vel_ot_2.grid(row = 2, column = 2, padx = 3, pady = 10)
+            scale_vel = tk.Scale(frame_vel_ot_2, from_=0.5, to=1.5, orient = 'horizontal',
+                tickinterval = 0.5, length = 300, resolution = 0.05,
+                label = 'Factor de velocidad', variable = controller.shared_data['vel_mov_ot'])
+            scale_vel.grid(row = 2, column = 1, padx = 3, pady = 10)
 
             frame_vel_ot_2.grid(row = 4, column = 1, columnspan = 2, padx = 10, pady = 10)
 
@@ -607,14 +611,14 @@ class Page5X(tk.Frame):
                                          text="Ultimo rack completo",
                                          variable=self.controller.shared_data['rack_completo_check'],
                                          height=1,
-                                         width=15,
+                                         width=21,
                                          command=disable_enable_button,
                                          onvalue=1, offvalue=0)
 
         self.controller.shared_data['rack_completo_check'].set(1)
 
 
-        checkb_ult_tubo.grid(row=1, column=1, columnspan=3, padx=0, pady=3)
+        checkb_ult_tubo.grid(row=1, column=1, columnspan=3, padx=3, pady=3)
 
         label_ult_tubo2 = tk.Label(sub_frame2, text='Ultimo tubo:')
         label_ult_tubo2.grid(row=2, column=1, columnspan=2, padx=3, pady=3)
@@ -622,12 +626,11 @@ class Page5X(tk.Frame):
         entry_ult_tubo = tk.Entry(sub_frame2, width=4)
         entry_ult_tubo.insert(0, 'E8')
         entry_ult_tubo.configure(state='readonly')
-        entry_ult_tubo.grid(row=3, column=1, padx=5, pady=3)
+        entry_ult_tubo.grid(row=3, column=1, padx=3, pady=3)
 
         boton_ult_tubo = tk.Button(sub_frame2, text="Seleccionar", state='disable', command=popup_select_tube)
-        boton_ult_tubo.grid(row=3, column=2, padx=3, pady=3, sticky = 'E')
+        boton_ult_tubo.grid(row=3, column=2, padx=3, pady=3, sticky = 'W')
 
-        sub_frame2.grid(row=4, column=1, padx=10, pady = 5)
 
 
 
@@ -678,20 +681,21 @@ class Page5X(tk.Frame):
             popup.resizable(False, False)
             popup.mainloop()
 
-        sub_frame3 = tk.Frame(self)
 
-        label_tips = tk.Label(sub_frame3, text='Primer tip disponible:')
-        label_tips.grid(row=1, column=1, columnspan=2, padx=10, pady=3)
+        label_tips = tk.Label(sub_frame2, text='Primer tip disponible:')
+        label_tips.grid(row=4, column=1, columnspan=2, padx=10, pady=3)
 
-        entry_primer_tip = tk.Entry(sub_frame3, width=4)
+        entry_primer_tip = tk.Entry(sub_frame2, width=4)
         entry_primer_tip.insert(0, 'A1')
         entry_primer_tip.configure(state='readonly')
-        entry_primer_tip.grid(row=2, column=1, padx=5, pady=3)
+        entry_primer_tip.grid(row=5, column=1, padx=5, pady=3)
 
-        boton_select_tip = tk.Button(sub_frame3, text="Seleccionar", command=popup_select_tip)
-        boton_select_tip.grid(row=2, column=2, padx=3, pady=3, sticky = 'E')
+        boton_select_tip = tk.Button(sub_frame2, text="Seleccionar", command=popup_select_tip)
+        boton_select_tip.grid(row=5, column=2, padx=3, pady=3, sticky = 'W')
 
-        sub_frame3.grid(row=5, column=1, padx=10, pady = 5)
+
+        sub_frame2.grid(row=4, column=1, padx=10, pady = 5)
+
 
         ################## BOTON GUARDAR ##################
 
@@ -901,14 +905,14 @@ class Page40X(tk.Frame):
                                          text="Ultimo rack completo",
                                          variable=self.controller.shared_data['rack_completo_check'],
                                          height=1,
-                                         width=15,
+                                         width=21,
                                          command=disable_enable_button,
                                          onvalue=1, offvalue=0)
 
         self.controller.shared_data['rack_completo_check'].set(1)
 
 
-        checkb_ult_tubo.grid(row=1, column=1, columnspan=3, padx=0, pady=3)
+        checkb_ult_tubo.grid(row=1, column=1, columnspan=3, padx=3, pady=3)
 
         label_ult_tubo2 = tk.Label(sub_frame2, text='Ultimo tubo:')
         label_ult_tubo2.grid(row=2, column=1, columnspan=2, padx=3, pady=3)
@@ -916,12 +920,11 @@ class Page40X(tk.Frame):
         entry_ult_tubo = tk.Entry(sub_frame2, width=4)
         entry_ult_tubo.insert(0, 'E8')
         entry_ult_tubo.configure(state='readonly')
-        entry_ult_tubo.grid(row=3, column=1, padx=5, pady=3)
+        entry_ult_tubo.grid(row=3, column=1, padx=3, pady=3)
 
         boton_ult_tubo = tk.Button(sub_frame2, text="Seleccionar", state='disable', command=popup_select_tube)
-        boton_ult_tubo.grid(row=3, column=2, padx=3, pady=3, sticky = 'E')
+        boton_ult_tubo.grid(row=3, column=2, padx=3, pady=3, sticky = 'W')
 
-        sub_frame2.grid(row=4, column=1, padx=10, pady = 5)
 
 
 
@@ -972,21 +975,20 @@ class Page40X(tk.Frame):
             popup.resizable(False, False)
             popup.mainloop()
 
-        sub_frame3 = tk.Frame(self)
 
-        label_tips = tk.Label(sub_frame3, text='Primer tip disponible:')
-        label_tips.grid(row=1, column=1, columnspan=2, padx=10, pady=3)
+        label_tips = tk.Label(sub_frame2, text='Primer tip disponible:')
+        label_tips.grid(row=4, column=1, columnspan=2, padx=10, pady=3)
 
-        entry_primer_tip = tk.Entry(sub_frame3, width=4)
+        entry_primer_tip = tk.Entry(sub_frame2, width=4)
         entry_primer_tip.insert(0, 'A1')
         entry_primer_tip.configure(state='readonly')
-        entry_primer_tip.grid(row=2, column=1, padx=5, pady=3)
+        entry_primer_tip.grid(row=5, column=1, padx=5, pady=3)
 
-        boton_select_tip = tk.Button(sub_frame3, text="Seleccionar", command=popup_select_tip)
-        boton_select_tip.grid(row=2, column=2, padx=3, pady=3, sticky = 'E')
+        boton_select_tip = tk.Button(sub_frame2, text="Seleccionar", command=popup_select_tip)
+        boton_select_tip.grid(row=5, column=2, padx=3, pady=3, sticky = 'W')
 
-        sub_frame3.grid(row=5, column=1, padx=10, pady = 5)
 
+        sub_frame2.grid(row=4, column=1, padx=10, pady = 5)
         ################## BOTON GUARDAR ##################
 
         boton_guardar = tk.Button(self, text ="Guardar", command = guardar)
@@ -1226,14 +1228,14 @@ class PageNFW(tk.Frame):
                                          text="Ultimo rack completo",
                                          variable=self.controller.shared_data['rack_completo_check'],
                                          height=1,
-                                         width=15,
+                                         width=21,
                                          command=disable_enable_button,
                                          onvalue=1, offvalue=0)
 
         self.controller.shared_data['rack_completo_check'].set(1)
 
 
-        checkb_ult_tubo.grid(row=1, column=1, columnspan=3, padx=0, pady=3)
+        checkb_ult_tubo.grid(row=1, column=1, columnspan=3, padx=3, pady=3)
 
         label_ult_tubo2 = tk.Label(sub_frame2, text='Ultimo tubo:')
         label_ult_tubo2.grid(row=2, column=1, columnspan=2, padx=3, pady=3)
@@ -1241,12 +1243,11 @@ class PageNFW(tk.Frame):
         entry_ult_tubo = tk.Entry(sub_frame2, width=4)
         entry_ult_tubo.insert(0, 'E8')
         entry_ult_tubo.configure(state='readonly')
-        entry_ult_tubo.grid(row=3, column=1, padx=5, pady=3)
+        entry_ult_tubo.grid(row=3, column=1, padx=3, pady=3)
 
         boton_ult_tubo = tk.Button(sub_frame2, text="Seleccionar", state='disable', command=popup_select_tube)
-        boton_ult_tubo.grid(row=3, column=2, padx=3, pady=3, sticky = 'E')
+        boton_ult_tubo.grid(row=3, column=2, padx=3, pady=3, sticky = 'W')
 
-        sub_frame2.grid(row=4, column=1, padx=10, pady = 5)
 
 
 
@@ -1297,20 +1298,20 @@ class PageNFW(tk.Frame):
             popup.resizable(False, False)
             popup.mainloop()
 
-        sub_frame3 = tk.Frame(self)
 
-        label_tips = tk.Label(sub_frame3, text='Primer tip disponible:')
-        label_tips.grid(row=1, column=1, columnspan=2, padx=10, pady=3)
+        label_tips = tk.Label(sub_frame2, text='Primer tip disponible:')
+        label_tips.grid(row=4, column=1, columnspan=2, padx=10, pady=3)
 
-        entry_primer_tip = tk.Entry(sub_frame3, width=4)
+        entry_primer_tip = tk.Entry(sub_frame2, width=4)
         entry_primer_tip.insert(0, 'A1')
         entry_primer_tip.configure(state='readonly')
-        entry_primer_tip.grid(row=2, column=1, padx=5, pady=3)
+        entry_primer_tip.grid(row=5, column=1, padx=5, pady=3)
 
-        boton_select_tip = tk.Button(sub_frame3, text="Seleccionar", command=popup_select_tip)
-        boton_select_tip.grid(row=2, column=2, padx=3, pady=3, sticky = 'E')
+        boton_select_tip = tk.Button(sub_frame2, text="Seleccionar", command=popup_select_tip)
+        boton_select_tip.grid(row=5, column=2, padx=3, pady=3, sticky = 'W')
 
-        sub_frame3.grid(row=5, column=1, padx=10, pady = 5)
+
+        sub_frame2.grid(row=4, column=1, padx=10, pady = 5)
 
         ################## BOTON GUARDAR ##################
 
@@ -1552,14 +1553,14 @@ class PagePC(tk.Frame):
                                          text="Ultimo rack completo",
                                          variable=self.controller.shared_data['rack_completo_check'],
                                          height=1,
-                                         width=15,
+                                         width=21,
                                          command=disable_enable_button,
                                          onvalue=1, offvalue=0)
 
         self.controller.shared_data['rack_completo_check'].set(1)
 
 
-        checkb_ult_tubo.grid(row=1, column=1, columnspan=3, padx=0, pady=3)
+        checkb_ult_tubo.grid(row=1, column=1, columnspan=3, padx=3, pady=3)
 
         label_ult_tubo2 = tk.Label(sub_frame2, text='Ultimo tubo:')
         label_ult_tubo2.grid(row=2, column=1, columnspan=2, padx=3, pady=3)
@@ -1567,12 +1568,11 @@ class PagePC(tk.Frame):
         entry_ult_tubo = tk.Entry(sub_frame2, width=4)
         entry_ult_tubo.insert(0, 'E8')
         entry_ult_tubo.configure(state='readonly')
-        entry_ult_tubo.grid(row=3, column=1, padx=5, pady=3)
+        entry_ult_tubo.grid(row=3, column=1, padx=3, pady=3)
 
         boton_ult_tubo = tk.Button(sub_frame2, text="Seleccionar", state='disable', command=popup_select_tube)
-        boton_ult_tubo.grid(row=3, column=2, padx=3, pady=3, sticky = 'E')
+        boton_ult_tubo.grid(row=3, column=2, padx=3, pady=3, sticky = 'W')
 
-        sub_frame2.grid(row=4, column=1, padx=10, pady = 5)
 
 
 
@@ -1623,20 +1623,20 @@ class PagePC(tk.Frame):
             popup.resizable(False, False)
             popup.mainloop()
 
-        sub_frame3 = tk.Frame(self)
 
-        label_tips = tk.Label(sub_frame3, text='Primer tip disponible:')
-        label_tips.grid(row=1, column=1, columnspan=2, padx=10, pady=3)
+        label_tips = tk.Label(sub_frame2, text='Primer tip disponible:')
+        label_tips.grid(row=4, column=1, columnspan=2, padx=10, pady=3)
 
-        entry_primer_tip = tk.Entry(sub_frame3, width=4)
+        entry_primer_tip = tk.Entry(sub_frame2, width=4)
         entry_primer_tip.insert(0, 'A1')
         entry_primer_tip.configure(state='readonly')
-        entry_primer_tip.grid(row=2, column=1, padx=5, pady=3)
+        entry_primer_tip.grid(row=5, column=1, padx=5, pady=3)
 
-        boton_select_tip = tk.Button(sub_frame3, text="Seleccionar", command=popup_select_tip)
-        boton_select_tip.grid(row=2, column=2, padx=3, pady=3, sticky = 'E')
+        boton_select_tip = tk.Button(sub_frame2, text="Seleccionar", command=popup_select_tip)
+        boton_select_tip.grid(row=5, column=2, padx=3, pady=3, sticky = 'W')
 
-        sub_frame3.grid(row=5, column=1, padx=10, pady = 5)
+
+        sub_frame2.grid(row=4, column=1, padx=10, pady = 5)
 
         ################## BOTON GUARDAR ##################
 
