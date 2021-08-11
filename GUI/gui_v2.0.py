@@ -740,24 +740,12 @@ class Page40X(tk.Frame):
             config['FIRST_TIP'] = {'tip': controller.shared_data['first_tip'].get()}
             config['OT-2-IP'] = {'ip': controller.shared_data['ot_2_ip'].get()}
             config['LAST_TUBE'] = {'tube': controller.shared_data['last_tube'].get()}
-            config['VEL_P300'] = {'asp': shared_data['vel_asp_p300'].get()}
+            config['VEL_P300'] = {'asp': controller.shared_data['vel_asp_p300'].get()}
             config['VEL_P300'] = {'disp': controller.shared_data['vel_disp_p300'].get()}
             config['VEL_P1000'] = {'asp': controller.shared_data['vel_asp_p1000'].get()}
             config['VEL_P1000'] = {'disp': controller.shared_data['vel_disp_p1000'].get()}
             config['VEL_OT-2'] = {'vel_mov_ot': controller.shared_data['vel_mov_ot'].get()}
 
-
-            falcons_dict = {}
-            a = 0
-            for i in range(3):
-                for j in string.ascii_uppercase[:2]:
-                    if falcons[a].get() != "":
-                        falcons_dict[j+str(i+1)] = falcons[a].get()
-                    else:
-                        falcons_dict[j + str(i + 1)] = "0"
-                    a += 1
-
-            config['VOL_FALCONS'] = falcons_dict
 
             with open('../config.ini', 'w') as configfile:
                 config.write(configfile)
