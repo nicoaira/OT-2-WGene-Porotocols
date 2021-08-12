@@ -153,8 +153,8 @@ def run(protocol: protocol_api.ProtocolContext):
     pipette.flow_rate.aspirate = vel_asp #controla la velocidad de aspiración, predeterminada
     pipette.flow_rate.dispense = vel_disp  # controla la velocidad de dispensado, predeterminada
     pipette.flow_rate.blow_out = 20  # controla la velocidad de expulción de flujo, predeterminada
-    
-    pipette.pick_up_tip(tiprack[primer_tip])
+    pipette.starting_tip = tiprack[primer_tip]
+    pipette.pick_up_tip()
 
 
 
