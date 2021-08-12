@@ -19,8 +19,8 @@ metadata = {
 # Info de configuracion
 
 config = configparser.ConfigParser()
-# config.read('/data/user_storage/config.ini')
-config.read('config.ini')
+config.read('/data/user_storage/config.ini')
+# config.read('config.ini')
 rvo = config.get('REACTIVO', 'reactivo')
 num_racks = int(config.get('NUM_RACKS', 'num_racks'))
 num_tandas = int(config.get('NUM_TANDAS', 'num_tandas'))
