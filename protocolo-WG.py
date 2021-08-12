@@ -327,6 +327,13 @@ def run(protocol: protocol_api.ProtocolContext):
 
 
 
+    cache_volumenes = configparser.ConfigParser()
+    cache_volumenes['VOLUMENES'] = falcons
+
+    with open('cache_volumenes.ini', 'w') as cache_file:
+        cache_volumenes.write(cache_file)
+
+
 
 
     # pipette.drop_tip()
