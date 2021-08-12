@@ -17,7 +17,7 @@ class Keep(tk.Tk):
         self.geometry('')
         self.title('Protocolo - WGene SARS-CoV-2 RT Detection')
         self.resizable(False, False)
-        # self.iconbitmap("wl-icono.ico") # solo en windows
+        self.iconbitmap("wl-icono.ico") # solo en windows
 
 
         self.shared_data ={
@@ -435,7 +435,7 @@ class Page5X(tk.Frame):
 
 
             try:                 
-                p = subprocess.check_call(upload_script, timeout = 2)
+                p = subprocess.check_call(upload_script, timeout = 7)
                 tkmb.showinfo(title = "Atencion!", message = "Configuracion guardada exitosamente!")
 
             except subprocess.TimeoutExpired:
@@ -749,7 +749,7 @@ class Page40X(tk.Frame):
 
 
             try:                 
-                p = subprocess.check_call(upload_script, timeout = 2)
+                p = subprocess.check_call(upload_script, timeout = 7)
                 tkmb.showinfo(title = "Atencion!", message = "Configuracion guardada exitosamente!")
 
             except subprocess.TimeoutExpired:
@@ -1056,7 +1056,7 @@ class PageNFW(tk.Frame):
 
 
             try:                 
-                p = subprocess.check_call(upload_script, timeout = 2)
+                p = subprocess.check_call(upload_script, timeout = 7)
                 tkmb.showinfo(title = "Atencion!", message = "Configuracion guardada exitosamente!")
 
             except subprocess.TimeoutExpired:
@@ -1379,7 +1379,7 @@ class PagePC(tk.Frame):
 
 
             try:                 
-                p = subprocess.check_call(upload_script, timeout = 2)
+                p = subprocess.check_call(upload_script, timeout = 7)
                 tkmb.showinfo(title = "Atencion!", message = "Configuracion guardada exitosamente!")
 
             except subprocess.TimeoutExpired:
