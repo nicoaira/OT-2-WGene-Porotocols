@@ -1,12 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter.messagebox import showinfo
+import tkinter.messagebox as tkmb
 import configparser
 import string
 import subprocess
 import os
 from PIL import ImageTk, Image
-
 
 
 
@@ -378,7 +377,7 @@ class StartPage(tk.Frame):
 
 
     def update_widgets(self):
-        rvo = self.controller.shared_data["rvo"].get()
+        pass
 
     def next_page(self):
         rvo = self.controller.shared_data["rvo"].get()
@@ -389,20 +388,6 @@ class Page5X(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
-
-        def popup_advertencia(title, msg):
-
-
-            popup_advertencia = tk.Toplevel(self)
-            popup_advertencia.wm_title(title)
-            label = ttk.Label(popup_advertencia, text=msg)
-            label.pack(side="top", fill="x", pady=10, padx=20)
-
-            B2 = ttk.Button(popup_advertencia, text="Cerrar", command=popup_advertencia.destroy)
-            B2.pack(padx = 10, pady = 5)
-
-            popup_advertencia.resizable(False, False)
-            popup_advertencia.mainloop()
 
 
         def guardar():
@@ -451,15 +436,13 @@ class Page5X(tk.Frame):
 
             try:                 
                 p = subprocess.check_call(upload_script, timeout = 2)
-                popup_advertencia("Atencion!","Configuracion guardada exitosamente!")
-
+                tkmb.showinfo(title = "Atencion!", message = "Configuracion guardada exitosamente!")
 
             except subprocess.TimeoutExpired:
-                popup_advertencia("Error!","No se pudo guardar la configuracion!")
-
+                tkmb.showerror(title='Error!', message='No se pudo guardar la configuracion!')
 
             else:
-                popup_advertencia("Error!","Ha ocurrido un error inesperado")
+                tkmb.showerror(title='Error!', message='No se pudo guardar la configuracion!')
 
                 
 
@@ -701,14 +684,28 @@ class Page5X(tk.Frame):
 
         ################## BOTON GUARDAR ##################
 
-        boton_guardar = tk.Button(self, text ="Guardar", command = guardar)
-        boton_guardar.grid(row=6, column=1, padx=10, pady = 5)
+        frame_botones = tk.Frame(self)
 
+        boton_guardar = tk.Button(frame_botones, text ="Guardar", command = guardar)
+        boton_guardar.grid(row=1, column=2, padx=10, pady = 5)
+
+
+        ################## BOTON VOLVER ##################
+
+
+        def regresar():
+            self.controller.show_frame('StartPage')
+
+        boton_guardar = tk.Button(frame_botones, text ="Volver", command = regresar)
+        boton_guardar.grid(row=1, column=1, padx=10, pady = 5)
+
+        frame_botones.grid(row=6, column=1, padx=10, pady = 5)
 
 
 
     def update_widgets(self):
         pass
+
 
 class Page40X(tk.Frame):
 
@@ -717,19 +714,6 @@ class Page40X(tk.Frame):
         super().__init__(parent)
         self.controller = controller
 
-        def popup_advertencia(title, msg):
-
-
-            popup_advertencia = tk.Toplevel(self)
-            popup_advertencia.wm_title(title)
-            label = ttk.Label(popup_advertencia, text=msg)
-            label.pack(side="top", fill="x", pady=10, padx=20)
-
-            B2 = ttk.Button(popup_advertencia, text="Cerrar", command=popup_advertencia.destroy)
-            B2.pack(padx = 10, pady = 5)
-
-            popup_advertencia.resizable(False, False)
-            popup_advertencia.mainloop()
 
 
         def guardar():
@@ -766,16 +750,13 @@ class Page40X(tk.Frame):
 
             try:                 
                 p = subprocess.check_call(upload_script, timeout = 2)
-                popup_advertencia("Atencion!","Configuracion guardada exitosamente!")
-
+                tkmb.showinfo(title = "Atencion!", message = "Configuracion guardada exitosamente!")
 
             except subprocess.TimeoutExpired:
-                popup_advertencia("Error!","No se pudo guardar la configuracion!")
-
+                tkmb.showerror(title='Error!', message='No se pudo guardar la configuracion!')
 
             else:
-                popup_advertencia("Error!","Ha ocurrido un error inesperado")
-
+                tkmb.showerror(title='Error!', message='No se pudo guardar la configuracion!')
                 
 
 
@@ -999,8 +980,23 @@ class Page40X(tk.Frame):
 
         ################## BOTON GUARDAR ##################
 
-        boton_guardar = tk.Button(self, text ="Guardar", command = guardar)
-        boton_guardar.grid(row=6, column=1, padx=10, pady = 5)
+        frame_botones = tk.Frame(self)
+
+        boton_guardar = tk.Button(frame_botones, text ="Guardar", command = guardar)
+        boton_guardar.grid(row=1, column=2, padx=10, pady = 5)
+
+
+        ################## BOTON VOLVER ##################
+
+
+        def regresar():
+            self.controller.show_frame('StartPage')
+
+        boton_guardar = tk.Button(frame_botones, text ="Volver", command = regresar)
+        boton_guardar.grid(row=1, column=1, padx=10, pady = 5)
+
+        frame_botones.grid(row=6, column=1, padx=10, pady = 5)
+
 
 
 
@@ -1014,20 +1010,6 @@ class PageNFW(tk.Frame):
         super().__init__(parent)
         self.controller = controller
 
-        def popup_advertencia(title, msg):
-
-
-            popup_advertencia = tk.Toplevel(self)
-            popup_advertencia.wm_title(title)
-            label = ttk.Label(popup_advertencia, text=msg)
-            label.pack(side="top", fill="x", pady=10, padx=20)
-
-            B2 = ttk.Button(popup_advertencia, text="Cerrar", command=popup_advertencia.destroy)
-            B2.pack(padx = 10, pady = 5)
-
-            popup_advertencia.resizable(False, False)
-            popup_advertencia.mainloop()
-
 
         def guardar():
 
@@ -1075,15 +1057,13 @@ class PageNFW(tk.Frame):
 
             try:                 
                 p = subprocess.check_call(upload_script, timeout = 2)
-                popup_advertencia("Atencion!","Configuracion guardada exitosamente!")
-
+                tkmb.showinfo(title = "Atencion!", message = "Configuracion guardada exitosamente!")
 
             except subprocess.TimeoutExpired:
-                popup_advertencia("Error!","No se pudo guardar la configuracion!")
-
+                tkmb.showerror(title='Error!', message='No se pudo guardar la configuracion!')
 
             else:
-                popup_advertencia("Error!","Ha ocurrido un error inesperado")
+                tkmb.showerror(title='Error!', message='No se pudo guardar la configuracion!')
 
                 
 
@@ -1324,9 +1304,22 @@ class PageNFW(tk.Frame):
 
         ################## BOTON GUARDAR ##################
 
-        boton_guardar = tk.Button(self, text ="Guardar", command = guardar)
-        boton_guardar.grid(row=6, column=1, padx=10, pady = 5)
+        frame_botones = tk.Frame(self)
 
+        boton_guardar = tk.Button(frame_botones, text ="Guardar", command = guardar)
+        boton_guardar.grid(row=1, column=2, padx=10, pady = 5)
+
+
+        ################## BOTON VOLVER ##################
+
+
+        def regresar():
+            self.controller.show_frame('StartPage')
+
+        boton_guardar = tk.Button(frame_botones, text ="Volver", command = regresar)
+        boton_guardar.grid(row=1, column=1, padx=10, pady = 5)
+
+        frame_botones.grid(row=6, column=1, padx=10, pady = 5)
 
 
 
@@ -1340,20 +1333,6 @@ class PagePC(tk.Frame):
         super().__init__(parent)
         self.controller = controller
 
-        def popup_advertencia(title, msg):
-
-
-            popup_advertencia = tk.Toplevel(self)
-            popup_advertencia.wm_title(title)
-            label = ttk.Label(popup_advertencia, text=msg)
-            label.pack(side="top", fill="x", pady=10, padx=20)
-
-            B2 = ttk.Button(popup_advertencia, text="Cerrar", command=popup_advertencia.destroy)
-            B2.pack(padx = 10, pady = 5)
-
-            popup_advertencia.resizable(False, False)
-            popup_advertencia.mainloop()
-
 
         def guardar():
 
@@ -1401,15 +1380,13 @@ class PagePC(tk.Frame):
 
             try:                 
                 p = subprocess.check_call(upload_script, timeout = 2)
-                popup_advertencia("Atencion!","Configuracion guardada exitosamente!")
-
+                tkmb.showinfo(title = "Atencion!", message = "Configuracion guardada exitosamente!")
 
             except subprocess.TimeoutExpired:
-                popup_advertencia("Error!","No se pudo guardar la configuracion!")
-
+                tkmb.showerror(title='Error!', message='No se pudo guardar la configuracion!')
 
             else:
-                popup_advertencia("Error!","Ha ocurrido un error inesperado")
+                tkmb.showerror(title='Error!', message='No se pudo guardar la configuracion!')
 
                 
 
@@ -1648,12 +1625,25 @@ class PagePC(tk.Frame):
 
         sub_frame2.grid(row=4, column=1, padx=10, pady = 5)
 
+
         ################## BOTON GUARDAR ##################
 
-        boton_guardar = tk.Button(self, text ="Guardar", command = guardar)
-        boton_guardar.grid(row=6, column=1, padx=10, pady = 5)
+        frame_botones = tk.Frame(self)
+
+        boton_guardar = tk.Button(frame_botones, text ="Guardar", command = guardar)
+        boton_guardar.grid(row=1, column=2, padx=10, pady = 5)
 
 
+        ################## BOTON VOLVER ##################
+
+
+        def regresar():
+            self.controller.show_frame('StartPage')
+
+        boton_guardar = tk.Button(frame_botones, text ="Volver", command = regresar)
+        boton_guardar.grid(row=1, column=1, padx=10, pady = 5)
+
+        frame_botones.grid(row=6, column=1, padx=10, pady = 5)
 
 
     def update_widgets(self):
