@@ -1029,17 +1029,30 @@ class PageNFW(tk.Frame):
             config['VEL_OT-2'] = {'vel_mov_ot': controller.shared_data['vel_mov_ot'].get()}
 
 
-            falcons_dict = {}
+            falcons_dict_9 = {}
             a = 0
             for i in range(3):
                 for j in string.ascii_uppercase[:2]:
                     if falcons[a].get() != "":
-                        falcons_dict[j+str(i+1)] = falcons[a].get()
+                        falcons_dict_9[j+str(i+1)] = falcons[a].get()
                     else:
-                        falcons_dict[j + str(i + 1)] = "0"
+                        falcons_dict_9[j + str(i + 1)] = "0"
                     a += 1
 
-            config['VOL_FALCONS'] = falcons_dict
+            a = 6
+
+            falcons_dict_11 = {}
+
+            for i in range(3):
+                for j in string.ascii_uppercase[:2]:
+                    if falcons[a].get() != "":
+                        falcons_dict_11[j+str(i+1)] = falcons[a].get()
+                    else:
+                        falcons_dict_11[j + str(i + 1)] = "0"
+                    a += 1
+
+            config['VOL_FALCONS_9'] = falcons_dict_9
+            config['VOL_FALCONS_11'] = falcons_dict_11
 
             with open('../config.ini', 'w') as configfile:
                 config.write(configfile)
@@ -1088,13 +1101,13 @@ class PageNFW(tk.Frame):
         label_num_racks = tk.Label(sub_frame0, text='Cantidad de racks a utilizar')
         label_num_racks.pack(padx=10)
 
-        vlist = list(range(1, 10))
+        vlist = list(range(1, 8))
         menu_num_racks = ttk.Combobox(master=sub_frame0, values=vlist, state='readonly', width=3)
         menu_num_racks.set(6)
 
         menu_num_racks.pack(padx=10, pady=10)
 
-        sub_frame0.grid(row=3, column=1, padx=10, pady = 5)
+        sub_frame0.grid(row=4, column=1, padx=10, pady = 5)
 
 
 
@@ -1108,7 +1121,7 @@ class PageNFW(tk.Frame):
         label_falcons = tk.Label(sub_frame1, text='Falcons a utilizar')
         label_falcons.pack(padx=10)
 
-        falcon_list = list(range(1, 7))
+        falcon_list = list(range(1, 13))
         menu_num_falcon = ttk.Combobox(master=sub_frame1, values=falcon_list, state='readonly', width=3)
         menu_num_falcon.bind('<<ComboboxSelected>>', seleccion_vol_falcons)
         menu_num_falcon.pack(padx=10, pady=10)
@@ -1116,7 +1129,13 @@ class PageNFW(tk.Frame):
         label_falcons = tk.Label(sub_frame1, text='Ingrese el volumen en cada Falcon (mL)')
         label_falcons.pack(padx=10, pady=10)
 
+
+        ##### Primer rack #####
+
         sub_frame1_1 = tk.Frame(self)
+
+        label_rack_9 = tk.Label(sub_frame1_1, text='Rack posición 9')
+        label_rack_9.grid(row=1, column=0, columnspan = 3, padx=10, pady=3)
 
 
         for i in range(3):
@@ -1129,9 +1148,10 @@ class PageNFW(tk.Frame):
                     row = 'B'
 
                 falcon_label = tk.Label(sub_frame1_1, text=row + str(i + 1))
-                falcon_label.grid(row=j, column=i, padx=10, pady=3)
+                falcon_label.grid(row=j+2, column=i, padx=10, pady=3)
 
         falcons = []
+
 
         for i in range(3):
 
@@ -1139,11 +1159,46 @@ class PageNFW(tk.Frame):
                 volfalcon = tk.Entry(sub_frame1_1, width=4, state='disabled')
                 volfalcon.insert(0, '50')
                 falcons.append(volfalcon)
-                volfalcon.grid(row=j, column=i, padx=10)
+                volfalcon.grid(row=j+2, column=i, padx=10)
+
+
+
+        ##### Segundo rack #####
+
+        sub_frame1_2 = tk.Frame(self)
+
+        label_rack_11 = tk.Label(sub_frame1_2, text='Rack posición 11')
+        label_rack_11.grid(row=1, column=0, columnspan = 3, padx=10, pady=3)
+
+
+
+        for i in range(3):
+
+            for j in range(0, 4, 2):
+
+                if j == 0:
+                    row = 'A'
+                elif j == 2:
+                    row = 'B'
+
+                falcon_label = tk.Label(sub_frame1_2, text=row + str(i + 1))
+                falcon_label.grid(row=j+2, column=i, padx=10, pady=3)
+
+
+        for i in range(3):
+
+            for j in range(1, 5, 2):
+                volfalcon = tk.Entry(sub_frame1_2, width=4, state='disabled')
+                volfalcon.insert(0, '50')
+                falcons.append(volfalcon)
+                volfalcon.grid(row=j+2, column=i, padx=10)
+
 
 
         sub_frame1.grid(row=1, column=1, padx=10, pady = 5)
         sub_frame1_1.grid(row=2, column=1, padx=10, pady = 5)
+        sub_frame1_2.grid(row=3, column=1, padx=10, pady = 5)
+
 
         ################## SELECCION DEL ULTIMO TUBO ##################
 
@@ -1300,7 +1355,7 @@ class PageNFW(tk.Frame):
         boton_select_tip.grid(row=5, column=2, padx=3, pady=3, sticky = 'W')
 
 
-        sub_frame2.grid(row=4, column=1, padx=10, pady = 5)
+        sub_frame2.grid(row=5, column=1, padx=10, pady = 5)
 
         ################## BOTON GUARDAR ##################
 
