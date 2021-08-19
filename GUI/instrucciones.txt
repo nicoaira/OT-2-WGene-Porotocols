@@ -1,0 +1,67 @@
+Configuracion del IP del OT-2:
+
+Esta aplicación funciona enviando un archvio de configuracion (config.ini) al servidor del OT-2, el cual
+será leido por el robot a la hora de ejecutar el protocolo. Para que se pueda cargar este archivo es 
+necesario que este configurado el IP del robot. El mismo se encuentra indicado en la OpentronsApp.
+Para poder tener conexión al servidor del robot y que el archivo se pueda guardar es importante que el 
+robot se encuentre encendido.
+
+Una vez completada la configuracion del protocolo es sumamente importante que corroboremos que se guardó 
+correctamente. No solo debe estar cambiado el archivo config.ini local, sino aquel que se encuentra en el
+servidor del OT-2 (ubicado en data/user_storage). Este último es el que es realmente utilizado por el 
+robot para leer el protocolo.
+
+
+
+Configuracion del protocolo:
+
+1 - Debemos indicar la cantidad de reactivo que tenemos que alicuotar. Los reactivos Master Mix 5X, Nuclease
+Free Water y el Positive Control estan pensados para ser alicutoados desde Falcons de 50 mL, por lo que 
+debemos indicar con cuantos Falcons, asi como indicar el volumen presente en cada uno de estos. 
+Es importante ser lo más preciso posible a la hora de indicar los volumenes, ya que la altura de aspirado 
+del robot dependerá del volumen dentro de cada falcon. Si volumen indicado es mayor al que realmente se
+encuentra en el Falcon, puede que el robot intente pipetear mas arriba de la superficie del líquido, 
+resultando en el aspirado de aire (PELIGRO!). Por otro lado, si el volumen indicado es menor al que realmente
+hay en el Falcon, puede que el tip se sumerga por demás en el líquido y que además no aprovechemos todo el
+reactivo que se encuentra en el recipiente.
+
+2 - Indicar la cantidad de racks con tubos a llenar que tenemos.
+
+3 - En caso que el ultimo de los racks no tenga todos los tubos, podemos indicar cual es el último tubo
+presente en el rack. Los racks se van llenando columna a columna, de izquierda a derecha. Es importante
+tener esto en cuenta no solo a la hora de seleccionar el ultimo tubo, sino también cuando ponemos los tubos
+en el rack. De estar mal configurado/dispuesto, podría resultar en que se dispense reactivo en el aire.
+
+4 - Indicar cual es el primer tip disponible en el la tipera. Así como en los racks, el robot utiliza los 
+tips columna a columna, de izquierda a derecha.
+
+5 - Gurdar la configuración.
+
+
+
+
+Disposición del material en el OT-2:
+
+El protocolo esta diseñado de manera que el material tenga una posición definida dentro de cada posición
+del robot:
+
+- Los racks con los tubos se ponen en orden desde la posición 1 hasta la 9. En caso de no contar con 9 racks
+estos se deben poner también desde la posición 1. Por ejemplo, si contamos con 4 racks, estos deben
+disponerse en las posiciones 1, 2, 3 y 4, siendo el rack en la posición 4 considerado el último (considerar
+en caso de que se utilicé la opción para racks incompletos).
+
+- La tipera se debe colocar destapada en la posición 10.
+
+- El rack que contiene el reactivo a alicuotar se debe colocar en la posición 11.
+
+- La posición 12 es exlusiva para el uso del cesto de residuos.
+
+
+
+
+Configuracion de velocidades:
+
+Recomendamos modificar estos valores solo en caso que sea extremadamente necesario y bajo su propio riesgo.
+Las velocidades optimas que se encuentran por defecto fueron determinadas previamente en CIBIO, con el
+objetivo de evitar salpicaduras o arrastre de gotas desde un tubo, lo cual podría resultar en un incorrecto
+volumen de alicuotado y/o el desperdicio de reactivo.
