@@ -513,9 +513,6 @@ class Page5X(tk.Frame):
             except subprocess.TimeoutExpired:
                 tkmb.showerror(title='Error!', message='No se pudo guardar la configuracion!')
 
-            else:
-                tkmb.showerror(title='Error!', message='No se pudo guardar la configuracion!')
-
                 
 
 
@@ -828,8 +825,6 @@ class Page40X(tk.Frame):
             except subprocess.TimeoutExpired:
                 tkmb.showerror(title='Error!', message='No se pudo guardar la configuracion!')
 
-            else:
-                tkmb.showerror(title='Error!', message='No se pudo guardar la configuracion!')
                 
 
 
@@ -1148,8 +1143,6 @@ class PageNFW(tk.Frame):
             except subprocess.TimeoutExpired:
                 tkmb.showerror(title='Error!', message='No se pudo guardar la configuracion!')
 
-            else:
-                tkmb.showerror(title='Error!', message='No se pudo guardar la configuracion!')
 
                 
 
@@ -1521,8 +1514,6 @@ class PagePC(tk.Frame):
             except subprocess.TimeoutExpired:
                 tkmb.showerror(title='Error!', message='No se pudo guardar la configuracion!')
 
-            else:
-                tkmb.showerror(title='Error!', message='No se pudo guardar la configuracion!')
 
                 
 
