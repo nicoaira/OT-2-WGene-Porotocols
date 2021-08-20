@@ -94,19 +94,19 @@ elif rvo == '40x':
 
 if rvo == '5x':
     vol_pipeta = 1000
-    vol_dispensar = 440
+    vol_dispensar = int(config.get('VOLUMENES_ALICUOTADO', 'vol_5x')
 
 elif rvo == '40x':
     vol_pipeta = 200
-    vol_dispensar = 55
+    vol_dispensar = int(config.get('VOLUMENES_ALICUOTADO', 'vol_40x')
 
 elif rvo == 'nfw':
     vol_pipeta = 1000
-    vol_dispensar = 1850
+    vol_dispensar = int(config.get('VOLUMENES_ALICUOTADO', 'vol_nfw')
 
 elif rvo == 'pc':
     vol_pipeta = 200
-    vol_dispensar = 54
+    vol_dispensar = int(config.get('VOLUMENES_ALICUOTADO', 'vol_pc')
 
 
 #### Parametros geometricos de los tubos con los reactivos
