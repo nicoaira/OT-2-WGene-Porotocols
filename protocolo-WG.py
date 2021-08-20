@@ -19,8 +19,8 @@ metadata = {
 # Info de configuracion
 
 config = configparser.ConfigParser()
-# config.read('/data/user_storage/config.ini')
-config.read('config.ini')
+config.read('/data/user_storage/config.ini')
+# config.read('config.ini')
 rvo = config.get('REACTIVO', 'reactivo')
 num_racks = int(config.get('NUM_RACKS', 'num_racks'))
 num_tandas = int(config.get('NUM_TANDAS', 'num_tandas'))
@@ -231,7 +231,7 @@ def run(protocol: protocol_api.ProtocolContext):
     pipette.pick_up_tip()
 
 
-    num_plate = 0
+    num_plate = -1
 
     for t in range(num_tandas):
 
@@ -246,19 +246,21 @@ def run(protocol: protocol_api.ProtocolContext):
 
             for index, falcon_rack in enumerate(falcons_list):
 
+                num_plate = index-1
 
                 protocol.comment('BLOQUE 1 - ' + 'RACK N ' + str(index+1))
 
                 for falcon, vol in falcon_rack.items():
-                    protocol.comment('PASO '+ str(contador) + '- ACTUALMENTE FALCON '+ falcon + ' RACK N ' + str(index+1))
+                    protocol.comment('PASO '+ str(contador) + '- ACTUALMENTE FALCON '+ falcon + ' RACK N ' + str(num_plate+1))
                     contador += 1
+
 
                     # Se busca el primer falcon que tenga volumen
                     if vol < vol_muerto:
 
                         all_empty = all([True if v < vol_muerto else False for v in falcon_rack.values()])
                         if all_empty and len(plates) > 1 and num_plate < len(plates) - 1:
-                            num_plate =+ 1
+
                             protocol.comment('BLOQUE 2')
                             break
                         else:
