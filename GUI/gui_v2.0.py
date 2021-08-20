@@ -33,7 +33,11 @@ class Keep(tk.Tk):
             'vel_asp_p1000' : tk.StringVar(),
             'vel_disp_p1000' : tk.StringVar(),
             'vel_mov_ot' : tk.StringVar(),
-            'num_tandas' : tk.StringVar()
+            'num_tandas' : tk.StringVar(),
+            'vol_5x' : tk.StringVar(),
+            'vol_40x': tk.StringVar(),
+            'vol_nfw': tk.StringVar(),
+            'vol_pc': tk.StringVar()
 
         }
 
@@ -87,7 +91,29 @@ class Keep(tk.Tk):
         except:
             self.shared_data['vel_mov_ot'].set('1')
 
+        try:
+            self.shared_data['vol_5x'].set(config.get('VOLUMENES_ALICUOTADO', 'vol_5x'))
 
+        except:
+            self.shared_data['vol_5x'].set('440')
+
+        try:
+            self.shared_data['vol_40x'].set(config.get('VOLUMENES_ALICUOTADO', 'vol_40x'))
+
+        except:
+            self.shared_data['vol_40x'].set('55')
+
+        try:
+            self.shared_data['vol_nfw'].set(config.get('VOLUMENES_ALICUOTADO', 'vol_nfw'))
+
+        except:
+            self.shared_data['vol_nfw'].set('1850')
+
+        try:
+            self.shared_data['vol_pc'].set(config.get('VOLUMENES_ALICUOTADO', 'vol_pc'))
+
+        except:
+            self.shared_data['vol_pc'].set('54')
 
 
 
@@ -218,6 +244,10 @@ class StartPage(tk.Frame):
                 self.controller.shared_data['vel_asp_p1000'].set(entry_vel_asp_p1000.get())
                 self.controller.shared_data['vel_disp_p1000'].set(entry_vel_disp_p1000.get())
                 self.controller.shared_data['vel_mov_ot'].set(scale_vel.get())
+                self.controller.shared_data['vol_5x'].set(entry_5x.get())
+                self.controller.shared_data['vol_40x'].set(entry_40x.get())
+                self.controller.shared_data['vol_nfw'].set(entry_nfw.get())
+                self.controller.shared_data['vol_pc'].set(entry_pc.get())
 
 
                 try:
@@ -229,6 +259,12 @@ class StartPage(tk.Frame):
                     config['VEL_P1000'] = {'asp' : self.controller.shared_data['vel_asp_p1000'].get(),
                                         'disp' : self.controller.shared_data['vel_disp_p1000'].get()}
                     config['VEL_OT-2'] = {'vel_mov_ot' : self.controller.shared_data['vel_mov_ot'].get()}
+
+                    config['VOLUMENES_ALICUOTADO'] = {'vol_5x' : self.controller.shared_data['vol_5x'].get(),
+                                                      'vol_40x': self.controller.shared_data['vol_40x'].get(),
+                                                      'vol_nfw': self.controller.shared_data['vol_nfw'].get(),
+                                                      'vol_pc': self.controller.shared_data['vol_pc'].get()
+                                                      }
 
 
                     with open('../config.ini', 'w') as configfile:
@@ -257,7 +293,7 @@ class StartPage(tk.Frame):
             entry_IP.grid(row = 2, column = 2, padx = 3, pady = 10)
 
 
-            frame_ip.grid(row = 1, column = 1, columnspan=6, padx = 3, pady = 10)
+            frame_ip.grid(row = 1, column = 1, columnspan=2, padx = 3, pady = 10)
 
 
 
@@ -266,14 +302,14 @@ class StartPage(tk.Frame):
 
             label_p300 = ttk.Label(frame_p300, text='Configuracion p300')
 
-            label_vel_asp_p300 = ttk.Label(frame_p300, text='Velocidad de aspiracion (uL/seg):')
+            label_vel_asp_p300 = ttk.Label(frame_p300, text='Velocidad de aspiracion (μL/seg):')
             entry_vel_asp_p300 = tk.Entry(frame_p300, width = 5)
             entry_vel_asp_p300.insert(0, self.controller.shared_data['vel_asp_p300'].get())
             label_p300.grid(row = 1, column = 1, padx = 10, pady = 10, columnspan = 2)
             label_vel_asp_p300.grid(row = 2, column = 1, padx = 3, pady = 10)
             entry_vel_asp_p300.grid(row = 2, column = 2, padx = 3, pady = 10)
 
-            label_vel_disp_p300 = ttk.Label(frame_p300, text='Velocidad de dispensado (uL/seg):')
+            label_vel_disp_p300 = ttk.Label(frame_p300, text='Velocidad de dispensado (μL/seg):')
             entry_vel_disp_p300 = tk.Entry(frame_p300, width = 5)
             entry_vel_disp_p300.insert(0, self.controller.shared_data['vel_disp_p300'].get())
             label_vel_disp_p300.grid(row = 3, column = 1, padx = 3, pady = 10)
@@ -288,21 +324,21 @@ class StartPage(tk.Frame):
 
             label_p1000 = ttk.Label(frame_p1000, text='Configuracion p1000')
 
-            label_vel_asp_p1000 = ttk.Label(frame_p1000, text='Velocidad de aspiracion (uL/seg):')
+            label_vel_asp_p1000 = ttk.Label(frame_p1000, text='Velocidad de aspiracion (μL/seg):')
             entry_vel_asp_p1000 = tk.Entry(frame_p1000, width = 5)
             entry_vel_asp_p1000.insert(0, self.controller.shared_data['vel_asp_p1000'].get())
             label_p1000.grid(row = 1, column = 1, padx = 10, pady = 10, columnspan = 2)
             label_vel_asp_p1000.grid(row = 2, column = 1, padx = 3, pady = 10)
             entry_vel_asp_p1000.grid(row = 2, column = 2, padx = 3, pady = 10)
 
-            label_vel_disp_p1000 = ttk.Label(frame_p1000, text='Velocidad de dispensado (uL/seg):')
+            label_vel_disp_p1000 = ttk.Label(frame_p1000, text='Velocidad de dispensado (μL/seg):')
             entry_vel_disp_p1000 = tk.Entry(frame_p1000, width = 5)
             entry_vel_disp_p1000.insert(0, self.controller.shared_data['vel_disp_p1000'].get())
             label_vel_disp_p1000.grid(row = 3, column = 1, padx = 3, pady = 10)
             entry_vel_disp_p1000.grid(row = 3, column = 2, padx = 3, pady = 10)
 
 
-            frame_p1000.grid(row = 3, column = 1, columnspan = 2, padx = 10, pady = 10)
+            frame_p1000.grid(row = 2, column = 4, columnspan = 2, padx = 10, pady = 10)
 
 
 
@@ -310,22 +346,55 @@ class StartPage(tk.Frame):
 
             label_config_ot_2 = ttk.Label(frame_vel_ot_2, text='Configuracion movimiento OT-2')
 
-            label_vel_ot_2 = ttk.Label(frame_vel_ot_2, text='Velocidad de movimiento del robot (mm/s):')
-            # entry_vel_ot_2 = tk.Entry(frame_vel_ot_2, width = 5)
-            # entry_vel_ot_2.insert(0, self.controller.shared_data['vel_mov_ot'].get())
             label_config_ot_2.grid(row = 1, column = 1, padx = 10, pady = 10, columnspan = 2)
-            # label_vel_ot_2.grid(row = 2, column = 1, padx = 3, pady = 10)
-            # entry_vel_ot_2.grid(row = 2, column = 2, padx = 3, pady = 10)
+
             scale_vel = tk.Scale(frame_vel_ot_2, from_=0.5, to=1.5, orient = 'horizontal',
                 tickinterval = 0.5, length = 300, resolution = 0.05,
                 label = 'Factor de velocidad', variable = controller.shared_data['vel_mov_ot'])
             scale_vel.grid(row = 2, column = 1, padx = 3, pady = 10)
 
-            frame_vel_ot_2.grid(row = 4, column = 1, columnspan = 2, padx = 10, pady = 10)
+            frame_vel_ot_2.grid(row = 3, column = 1, columnspan = 6, padx = 10, pady = 10)
 
 
-            B3 = ttk.Button(popup_oa, text="Guardar", command=guardar_config_avanzada)
-            B3.grid(row = 5, column = 1, columnspan = 2, padx = 10, pady = 10)
+            frame_volumenes = tk.Frame(popup_oa, relief = 'groove')
+
+            label_volumenes = tk.Label(frame_volumenes, text = 'Configuracion de volumenes de alicuotado (μL)')
+            label_volumenes.grid(row = 1, column = 1, columnspan = 4, padx = 10, pady = 10)
+
+            label_5x = tk.Label(frame_volumenes, text = 'Master Mix 5x:')
+            entry_5x = tk.Entry(frame_volumenes, width = 4)
+            entry_5x.insert(0, self.controller.shared_data['vol_5x'].get())
+            label_5x.grid(row = 2, column = 1, columnspan = 1, padx = 3, pady = 10, sticky = 'E')
+            entry_5x.grid(row = 2, column = 2, columnspan = 1, padx = 3, pady = 10, sticky = 'W')
+
+            label_40x = tk.Label(frame_volumenes, text = 'RT Mix 40x:')
+            entry_40x = tk.Entry(frame_volumenes, width = 4)
+            label_40x.grid(row = 3, column = 1, columnspan = 1, padx = 3, pady = 10, sticky = 'E')
+            entry_40x.grid(row = 3, column = 2, columnspan = 1, padx = 3, pady = 10, sticky = 'W')
+            entry_40x.insert(0, self.controller.shared_data['vol_40x'].get())
+
+            label_nfw = tk.Label(frame_volumenes, text = 'Nuclease Free Water:')
+            entry_nfw = tk.Entry(frame_volumenes, width = 4)
+            label_nfw.grid(row = 4, column = 1, columnspan = 1, padx = 3, pady = 10, sticky = 'E')
+            entry_nfw.grid(row = 4, column = 2, columnspan = 1, padx = 3, pady = 10, sticky = 'W')
+            entry_nfw.insert(0, self.controller.shared_data['vol_nfw'].get())
+
+            label_pc = tk.Label(frame_volumenes, text = 'Positive Control:')
+            entry_pc = tk.Entry(frame_volumenes, width = 4)
+            label_pc.grid(row = 5, column = 1, columnspan = 1, padx = 3, pady = 10, sticky = 'E')
+            entry_pc.grid(row = 5, column = 2, columnspan = 1, padx = 3, pady = 10, sticky = 'W')
+            entry_pc.insert(0, self.controller.shared_data['vol_pc'].get())
+
+            frame_volumenes.grid(row = 4, column = 1, columnspan = 6, padx = 10, pady = 10)
+
+
+            B3 = ttk.Button(popup_oa, text="Volver", command=popup_oa.destroy)
+            B3.grid(row = 5, column = 2, columnspan = 2, padx = 10, pady = 10)
+
+            B4 = ttk.Button(popup_oa, text="Guardar", command=guardar_config_avanzada)
+            B4.grid(row = 5, column = 3, columnspan = 2, padx = 10, pady = 10)
+
+
 
             popup_oa.resizable(False, False)
             popup_oa.mainloop()
