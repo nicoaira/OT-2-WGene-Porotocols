@@ -4,8 +4,7 @@ import tkinter.messagebox as tkmb
 import configparser
 import string
 import subprocess
-import os
-# from PIL import ImageTk, Image
+from PIL import ImageTk, Image
 
 
 
@@ -150,7 +149,8 @@ class StartPage(tk.Frame):
         def next_available():
             button["state"] = "normal"
 
-        frame_rvo = tk.Frame(self)
+        frame_rvo = tk.Frame(self, relief = 'groove')
+        frame_rvo['borderwidth'] = 2
 
         label_rvo = tk.Label(frame_rvo, text='Reactivo a alicuotar:')
         label_rvo.grid(row = 1, column = 1, padx = 3, pady = 4, sticky = 'w')
@@ -201,22 +201,22 @@ class StartPage(tk.Frame):
 
         ########### LOGO WL ############
 
-        # img = (Image.open('wl-logo.png'))
-        # resized_image= img.resize((150, 124), Image.ANTIALIAS)
-        # self.logo = ImageTk.PhotoImage(resized_image)
-        #
-        # panel_wl = tk.Label(self, image = self.logo)
-        # panel_wl.grid(row = 0, column = 1, padx = 3, pady = 4, rowspan = 1)
+        img = (Image.open('wl-logo.png'))
+        resized_image= img.resize((150, 124), Image.ANTIALIAS)
+        self.logo = ImageTk.PhotoImage(resized_image)
+
+        panel_wl = tk.Label(self, image = self.logo)
+        panel_wl.grid(row = 0, column = 1, padx = 3, pady = 4, rowspan = 1)
 
 
         ########### LOGO CIBIO ############
 
-        # img2 = (Image.open('cibio-logo.png'))
-        # resized_image2= img2.resize((136, 200), Image.ANTIALIAS)
-        # self.logo2 = ImageTk.PhotoImage(resized_image2)
-        #
-        # panel_cibio = tk.Label(self, image = self.logo2)
-        # panel_cibio.grid(row = 0, column = 2, padx = 3, pady = 4, rowspan = 1)
+        img2 = (Image.open('cibio-logo.png'))
+        resized_image2= img2.resize((136, 200), Image.ANTIALIAS)
+        self.logo2 = ImageTk.PhotoImage(resized_image2)
+
+        panel_cibio = tk.Label(self, image = self.logo2)
+        panel_cibio.grid(row = 0, column = 2, padx = 3, pady = 4, rowspan = 1)
 
 
 
@@ -231,8 +231,7 @@ class StartPage(tk.Frame):
         ################## BOTON OPCIONES AVANZADAS ##################
 
 
-        frame_botones = tk.Frame(self)
-
+        frame_botones = tk.Frame(self, relief = 'groove')
 
         def opciones_avanzadas():
 
@@ -283,21 +282,23 @@ class StartPage(tk.Frame):
 
 
             frame_ip = tk.Frame(popup_oa, relief='groove')
+            frame_ip['borderwidth'] = 2
 
             label_config_ip = ttk.Label(frame_ip, text='Configuracion de IP')
             label_IP = ttk.Label(frame_ip, text='IP OT-2:')
             entry_IP = tk.Entry(frame_ip, width = 16)
             entry_IP.insert(0, self.controller.shared_data['ot_2_ip'].get())
             label_config_ip.grid(row = 1, column = 1, padx = 3, pady = 10, columnspan = 2)
-            label_IP.grid(row = 2, column = 1, padx = 3, pady = 10)
-            entry_IP.grid(row = 2, column = 2, padx = 3, pady = 10)
+            label_IP.grid(row = 2, column = 1, padx = 3, pady = 10, sticky = 'W')
+            entry_IP.grid(row = 2, column = 2, padx = 3, pady = 10, sticky = 'E')
 
 
-            frame_ip.grid(row = 1, column = 1, columnspan=2, padx = 3, pady = 10)
+            frame_ip.grid(row = 1, column = 1, columnspan=6, padx = 3, pady = 10, ipadx = 5)
 
 
 
             frame_p300 = tk.Frame(popup_oa, relief='groove')
+            frame_p300['borderwidth'] = 2
 
 
             label_p300 = ttk.Label(frame_p300, text='Configuracion p300')
@@ -320,7 +321,7 @@ class StartPage(tk.Frame):
 
 
             frame_p1000 = tk.Frame(popup_oa, relief='groove')
-
+            frame_p1000['borderwidth'] = 2
 
             label_p1000 = ttk.Label(frame_p1000, text='Configuracion p1000')
 
@@ -343,6 +344,7 @@ class StartPage(tk.Frame):
 
 
             frame_vel_ot_2 = tk.Frame(popup_oa, relief='groove')
+            frame_vel_ot_2['borderwidth'] = 2
 
             label_config_ot_2 = ttk.Label(frame_vel_ot_2, text='Configuracion movimiento OT-2')
 
@@ -357,6 +359,7 @@ class StartPage(tk.Frame):
 
 
             frame_volumenes = tk.Frame(popup_oa, relief = 'groove')
+            frame_volumenes['borderwidth'] = 2
 
             label_volumenes = tk.Label(frame_volumenes, text = 'Configuracion de volumenes de alicuotado (μL)')
             label_volumenes.grid(row = 1, column = 1, columnspan = 4, padx = 10, pady = 10)
@@ -442,7 +445,7 @@ class StartPage(tk.Frame):
         boton_intrucciones.grid(row = 3, column = 1, padx = 3, pady = 4)
 
 
-        frame_botones.grid(row = 2, column = 2, padx = 3, pady = 4, sticky = 's')
+        frame_botones.grid(row = 2, column = 2, padx = 3, pady = 4, ipady = 10)
 
 
     def update_widgets(self):
@@ -531,7 +534,7 @@ class Page5X(tk.Frame):
 
         ################## CANTIDAD DE RACKS A USAR ##################
 
-        sub_frame0 = tk.Frame(self)
+        sub_frame0 = tk.Frame(self, relief = 'groove', borderwidth = 2)
 
         label_num_racks = tk.Label(sub_frame0, text='Cantidad de racks a utilizar')
         label_num_racks.pack(padx=10)
@@ -550,10 +553,10 @@ class Page5X(tk.Frame):
         ################## SETEO FALCONS ##################
 
 
-        sub_frame1 = tk.Frame(self)
+        sub_frame1 = tk.Frame(self, relief = 'groove', borderwidth = 2)
 
 
-        label_falcons = tk.Label(sub_frame1, text='Falcons a utilizar')
+        label_falcons = tk.Label(sub_frame1, text='Cantidad de Falcons a utilizar')
         label_falcons.pack(padx=10)
 
         falcon_list = list(range(1, 7))
@@ -561,10 +564,11 @@ class Page5X(tk.Frame):
         menu_num_falcon.bind('<<ComboboxSelected>>', seleccion_vol_falcons)
         menu_num_falcon.pack(padx=10, pady=10)
 
-        label_falcons = tk.Label(sub_frame1, text='Ingrese el volumen en cada Falcon (mL)')
-        label_falcons.pack(padx=10, pady=10)
 
-        sub_frame1_1 = tk.Frame(self)
+        sub_frame1_1 = tk.Frame(self, relief = 'groove', borderwidth = 2)
+
+        label_falcons = tk.Label(sub_frame1_1, text='Ingrese el volumen en cada Falcon (mL)')
+        label_falcons.grid(row=0, column=0, padx=10, pady=3, columnspan = 3)
 
 
         for i in range(3):
@@ -577,7 +581,7 @@ class Page5X(tk.Frame):
                     row = 'B'
 
                 falcon_label = tk.Label(sub_frame1_1, text=row + str(i + 1))
-                falcon_label.grid(row=j, column=i, padx=10, pady=3)
+                falcon_label.grid(row=j+1, column=i, padx=3, pady=3)
 
         falcons = []
 
@@ -587,15 +591,15 @@ class Page5X(tk.Frame):
                 volfalcon = tk.Entry(sub_frame1_1, width=4, state='disabled')
                 volfalcon.insert(0, '44')
                 falcons.append(volfalcon)
-                volfalcon.grid(row=j, column=i, padx=10)
+                volfalcon.grid(row=j+1, column=i, padx=3)
 
 
         sub_frame1.grid(row=1, column=1, padx=10, pady = 5)
-        sub_frame1_1.grid(row=2, column=1, padx=10, pady = 5)
+        sub_frame1_1.grid(row=2, column=1, padx=10, pady = 5, ipady = 10)
 
         ################## SELECCION DEL ULTIMO TUBO ##################
 
-        sub_frame2 = tk.Frame(self)
+        sub_frame2 = tk.Frame(self, relief = 'groove', borderwidth = 2)
 
 
         def disable_enable_button():
@@ -748,7 +752,7 @@ class Page5X(tk.Frame):
         boton_select_tip.grid(row=5, column=2, padx=3, pady=3, sticky = 'W')
 
 
-        sub_frame2.grid(row=4, column=1, padx=10, pady = 5)
+        sub_frame2.grid(row=4, column=1, padx=10, pady = 5, ipady = 3)
 
 
         ################## BOTON GUARDAR ##################
@@ -844,7 +848,7 @@ class Page40X(tk.Frame):
 
         ################## CANTIDAD DE RACKS A USAR ##################
 
-        sub_frame0 = tk.Frame(self)
+        sub_frame0 = tk.Frame(self, relief = 'groove', borderwidth = 2)
 
         label_num_racks = tk.Label(sub_frame0, text='Cantidad de racks por tanda')
         label_num_racks.pack(padx=10)
@@ -855,7 +859,7 @@ class Page40X(tk.Frame):
 
         menu_num_racks.pack(padx=10, pady=10)
 
-        sub_frame0.grid(row=3, column=1, padx=10, pady = 5)
+        sub_frame0.grid(row=3, column=1, padx=10, pady = 5, ipady = 5)
 
 
         ################## CANTIDAD DE TANDAS ##################
@@ -878,7 +882,7 @@ class Page40X(tk.Frame):
         ################## SETEO FALCONS ##################
 
 
-        sub_frame1 = tk.Frame(self)
+        sub_frame1 = tk.Frame(self, relief = 'groove', borderwidth = 2)
 
         label_falcons = tk.Label(sub_frame1, text='Cantidad de tubos 2,5 mL RT-Mix a alicuotar')
         label_falcons.pack(padx=10)
@@ -891,7 +895,7 @@ class Page40X(tk.Frame):
 
         ################## SELECCION DEL ULTIMO TUBO ##################
 
-        sub_frame2 = tk.Frame(self)
+        sub_frame2 = tk.Frame(self, relief = 'groove', borderwidth = 2)
 
 
         def disable_enable_button():
@@ -1044,7 +1048,7 @@ class Page40X(tk.Frame):
         boton_select_tip.grid(row=5, column=2, padx=3, pady=3, sticky = 'W')
 
 
-        sub_frame2.grid(row=5, column=1, padx=10, pady = 5)
+        sub_frame2.grid(row=5, column=1, padx=10, pady = 5, ipady = 3)
 
 
         ################## BOTON GUARDAR ##################
@@ -1165,7 +1169,7 @@ class PageNFW(tk.Frame):
 
         ################## CANTIDAD DE RACKS A USAR ##################
 
-        sub_frame0 = tk.Frame(self)
+        sub_frame0 = tk.Frame(self, relief = 'groove', borderwidth = 2)
 
         label_num_racks = tk.Label(sub_frame0, text='Cantidad de racks a utilizar')
         label_num_racks.pack(padx=10)
@@ -1176,7 +1180,7 @@ class PageNFW(tk.Frame):
 
         menu_num_racks.pack(padx=10, pady=10)
 
-        sub_frame0.grid(row=4, column=1, padx=10, pady = 5)
+        sub_frame0.grid(row=5, column=1, padx=10, pady = 5)
 
 
 
@@ -1184,10 +1188,10 @@ class PageNFW(tk.Frame):
         ################## SETEO FALCONS ##################
 
 
-        sub_frame1 = tk.Frame(self)
+        sub_frame1 = tk.Frame(self, relief = 'groove', borderwidth = 2)
 
 
-        label_falcons = tk.Label(sub_frame1, text='Falcons a utilizar')
+        label_falcons = tk.Label(sub_frame1, text='Cantidad de Falcons a utilizar')
         label_falcons.pack(padx=10)
 
         falcon_list = list(range(1, 13))
@@ -1195,13 +1199,19 @@ class PageNFW(tk.Frame):
         menu_num_falcon.bind('<<ComboboxSelected>>', seleccion_vol_falcons)
         menu_num_falcon.pack(padx=10, pady=10)
 
-        label_falcons = tk.Label(sub_frame1, text='Ingrese el volumen en cada Falcon (mL)')
-        label_falcons.pack(padx=10, pady=10)
+
 
 
         ##### Primer rack #####
 
-        sub_frame1_1 = tk.Frame(self)
+
+
+        sub_frame1_0 = tk.Frame(self, relief = 'groove', borderwidth = 2)
+
+        label_falcons = tk.Label(sub_frame1_0, text='Ingrese el volumen en cada Falcon (mL)')
+        label_falcons.grid(row=0, column=0, columnspan = 3, padx=10, pady=3)
+
+        sub_frame1_1 = tk.Frame(sub_frame1_0, relief = 'groove', borderwidth = 2)
 
         label_rack_9 = tk.Label(sub_frame1_1, text='Rack posición 9')
         label_rack_9.grid(row=1, column=0, columnspan = 3, padx=10, pady=3)
@@ -1234,7 +1244,7 @@ class PageNFW(tk.Frame):
 
         ##### Segundo rack #####
 
-        sub_frame1_2 = tk.Frame(self)
+        sub_frame1_2 = tk.Frame(sub_frame1_0, relief = 'groove', borderwidth = 2)
 
         label_rack_11 = tk.Label(sub_frame1_2, text='Rack posición 11')
         label_rack_11.grid(row=1, column=0, columnspan = 3, padx=10, pady=3)
@@ -1265,13 +1275,15 @@ class PageNFW(tk.Frame):
 
 
         sub_frame1.grid(row=1, column=1, padx=10, pady = 5)
-        sub_frame1_1.grid(row=2, column=1, padx=10, pady = 5)
-        sub_frame1_2.grid(row=3, column=1, padx=10, pady = 5)
+        sub_frame1_0.grid(row=2, column=1, padx=10, pady = 5)
+        sub_frame1_1.grid(row=1, column=1, padx=10, pady = 5, ipady = 5)
+
+        sub_frame1_2.grid(row=1, column=2, padx=10, pady = 5, ipady = 5)
 
 
         ################## SELECCION DEL ULTIMO TUBO ##################
 
-        sub_frame2 = tk.Frame(self)
+        sub_frame2 = tk.Frame(self, relief = 'groove', borderwidth = 2)
 
 
         def disable_enable_button():
@@ -1424,7 +1436,7 @@ class PageNFW(tk.Frame):
         boton_select_tip.grid(row=5, column=2, padx=3, pady=3, sticky = 'W')
 
 
-        sub_frame2.grid(row=5, column=1, padx=10, pady = 5)
+        sub_frame2.grid(row=6, column=1, padx=10, pady = 5, ipady = 3)
 
         ################## BOTON GUARDAR ##################
 
@@ -1443,7 +1455,7 @@ class PageNFW(tk.Frame):
         boton_guardar = tk.Button(frame_botones, text ="Volver", command = regresar)
         boton_guardar.grid(row=1, column=1, padx=10, pady = 5)
 
-        frame_botones.grid(row=6, column=1, padx=10, pady = 5)
+        frame_botones.grid(row=7, column=1, padx=10, pady = 5)
 
 
 
@@ -1530,7 +1542,7 @@ class PagePC(tk.Frame):
 
         ################## CANTIDAD DE RACKS A USAR ##################
 
-        sub_frame0 = tk.Frame(self)
+        sub_frame0 = tk.Frame(self, relief = 'groove', borderwidth = 2)
 
         label_num_racks = tk.Label(sub_frame0, text='Cantidad de racks a utilizar')
         label_num_racks.pack(padx=10)
@@ -1549,10 +1561,10 @@ class PagePC(tk.Frame):
         ################## SETEO FALCONS ##################
 
 
-        sub_frame1 = tk.Frame(self)
+        sub_frame1 = tk.Frame(self, relief = 'groove', borderwidth = 2)
 
 
-        label_falcons = tk.Label(sub_frame1, text='Falcons a utilizar')
+        label_falcons = tk.Label(sub_frame1, text='Cantidad de Falcons a utilizar')
         label_falcons.pack(padx=10)
 
         falcon_list = list(range(1, 7))
@@ -1560,10 +1572,12 @@ class PagePC(tk.Frame):
         menu_num_falcon.bind('<<ComboboxSelected>>', seleccion_vol_falcons)
         menu_num_falcon.pack(padx=10, pady=10)
 
-        label_falcons = tk.Label(sub_frame1, text='Ingrese el volumen en cada Falcon (mL)')
-        label_falcons.pack(padx=10, pady=10)
 
-        sub_frame1_1 = tk.Frame(self)
+
+        sub_frame1_1 = tk.Frame(self, relief = 'groove', borderwidth = 2)
+
+        label_falcons = tk.Label(sub_frame1_1, text='Ingrese el volumen en cada Falcon (mL)')
+        label_falcons.grid(row=0, column=0, padx=10, pady=3, columnspan = 3)
 
 
         for i in range(3):
@@ -1576,7 +1590,7 @@ class PagePC(tk.Frame):
                     row = 'B'
 
                 falcon_label = tk.Label(sub_frame1_1, text=row + str(i + 1))
-                falcon_label.grid(row=j, column=i, padx=10, pady=3)
+                falcon_label.grid(row=j+1, column=i, padx=10, pady=3)
 
         falcons = []
 
@@ -1586,15 +1600,15 @@ class PagePC(tk.Frame):
                 volfalcon = tk.Entry(sub_frame1_1, width=4, state='disabled')
                 volfalcon.insert(0, '50')
                 falcons.append(volfalcon)
-                volfalcon.grid(row=j, column=i, padx=10)
+                volfalcon.grid(row=j+1, column=i, padx=10)
 
 
         sub_frame1.grid(row=1, column=1, padx=10, pady = 5)
-        sub_frame1_1.grid(row=2, column=1, padx=10, pady = 5)
+        sub_frame1_1.grid(row=2, column=1, padx=10, pady = 5, ipady = 5)
 
         ################## SELECCION DEL ULTIMO TUBO ##################
 
-        sub_frame2 = tk.Frame(self)
+        sub_frame2 = tk.Frame(self, relief = 'groove', borderwidth = 2)
 
 
         def disable_enable_button():
@@ -1747,7 +1761,7 @@ class PagePC(tk.Frame):
         boton_select_tip.grid(row=5, column=2, padx=3, pady=3, sticky = 'W')
 
 
-        sub_frame2.grid(row=4, column=1, padx=10, pady = 5)
+        sub_frame2.grid(row=4, column=1, padx=10, pady = 5, ipady = 3)
 
 
         ################## BOTON GUARDAR ##################
