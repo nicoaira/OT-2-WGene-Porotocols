@@ -478,6 +478,11 @@ class Page5X(tk.Frame):
             config['VEL_P1000'] = {'asp': controller.shared_data['vel_asp_p1000'].get(), 
                                 'disp': controller.shared_data['vel_disp_p1000'].get()}
             config['VEL_OT-2'] = {'vel_mov_ot': controller.shared_data['vel_mov_ot'].get()}
+            config['VOLUMENES_ALICUOTADO'] = {'vol_5x': self.controller.shared_data['vol_5x'].get(),
+                                              'vol_40x': self.controller.shared_data['vol_40x'].get(),
+                                              'vol_nfw': self.controller.shared_data['vol_nfw'].get(),
+                                              'vol_pc': self.controller.shared_data['vol_pc'].get()
+                                              }
 
 
             falcons_dict = {}
@@ -802,6 +807,11 @@ class Page40X(tk.Frame):
             config['VEL_P1000'] = {'asp': controller.shared_data['vel_asp_p1000'].get(), 
                                 'disp': controller.shared_data['vel_disp_p1000'].get()}
             config['VEL_OT-2'] = {'vel_mov_ot': controller.shared_data['vel_mov_ot'].get()}
+            config['VOLUMENES_ALICUOTADO'] = {'vol_5x': self.controller.shared_data['vol_5x'].get(),
+                                              'vol_40x': self.controller.shared_data['vol_40x'].get(),
+                                              'vol_nfw': self.controller.shared_data['vol_nfw'].get(),
+                                              'vol_pc': self.controller.shared_data['vol_pc'].get()
+                                              }
 
 
             with open('../config.ini', 'w') as configfile:
@@ -1095,6 +1105,11 @@ class PageNFW(tk.Frame):
             config['VEL_P1000'] = {'asp': controller.shared_data['vel_asp_p1000'].get(), 
                                 'disp': controller.shared_data['vel_disp_p1000'].get()}
             config['VEL_OT-2'] = {'vel_mov_ot': controller.shared_data['vel_mov_ot'].get()}
+            config['VOLUMENES_ALICUOTADO'] = {'vol_5x': self.controller.shared_data['vol_5x'].get(),
+                                              'vol_40x': self.controller.shared_data['vol_40x'].get(),
+                                              'vol_nfw': self.controller.shared_data['vol_nfw'].get(),
+                                              'vol_pc': self.controller.shared_data['vol_pc'].get()
+                                              }
 
 
             falcons_dict_9 = {}
@@ -1479,6 +1494,11 @@ class PagePC(tk.Frame):
             config['VEL_P1000'] = {'asp': controller.shared_data['vel_asp_p1000'].get(), 
                                 'disp': controller.shared_data['vel_disp_p1000'].get()}
             config['VEL_OT-2'] = {'vel_mov_ot': controller.shared_data['vel_mov_ot'].get()}
+            config['VOLUMENES_ALICUOTADO'] = {'vol_5x': self.controller.shared_data['vol_5x'].get(),
+                                              'vol_40x': self.controller.shared_data['vol_40x'].get(),
+                                              'vol_nfw': self.controller.shared_data['vol_nfw'].get(),
+                                              'vol_pc': self.controller.shared_data['vol_pc'].get()
+                                              }
 
 
             falcons_dict = {}
