@@ -769,12 +769,22 @@ class Page5X(tk.Frame):
 
 
         def regresar():
+            self.controller.shared_data['rack_completo_check'].set(1)
+            boton_ult_tubo["state"] = "disabled"
+            self.controller.shared_data["last_tube"].set('E8')
+            entry_ult_tubo.configure(state='normal')
+            entry_ult_tubo.delete(0, tk.END)
+            entry_ult_tubo.insert(0, self.controller.shared_data["last_tube"].get())
+            entry_ult_tubo.configure(state='readonly')
             self.controller.show_frame('StartPage')
+
+
 
         boton_guardar = tk.Button(frame_botones, text ="Volver", command = regresar)
         boton_guardar.grid(row=1, column=1, padx=10, pady = 5)
 
         frame_botones.grid(row=6, column=1, padx=10, pady = 5)
+
 
 
 
@@ -1068,7 +1078,15 @@ class Page40X(tk.Frame):
 
 
         def regresar():
+            self.controller.shared_data['rack_completo_check'].set(1)
+            boton_ult_tubo["state"] = "disabled"
+            self.controller.shared_data["last_tube"].set('E8')
+            entry_ult_tubo.configure(state='normal')
+            entry_ult_tubo.delete(0, tk.END)
+            entry_ult_tubo.insert(0, self.controller.shared_data["last_tube"].get())
+            entry_ult_tubo.configure(state='readonly')
             self.controller.show_frame('StartPage')
+
 
         boton_guardar = tk.Button(frame_botones, text ="Volver", command = regresar)
         boton_guardar.grid(row=1, column=1, padx=10, pady = 5)
@@ -1458,6 +1476,13 @@ class PageNFW(tk.Frame):
 
 
         def regresar():
+            self.controller.shared_data['rack_completo_check'].set(1)
+            boton_ult_tubo["state"] = "disabled"
+            self.controller.shared_data["last_tube"].set('E8')
+            entry_ult_tubo.configure(state='normal')
+            entry_ult_tubo.delete(0, tk.END)
+            entry_ult_tubo.insert(0, self.controller.shared_data["last_tube"].get())
+            entry_ult_tubo.configure(state='readonly')
             self.controller.show_frame('StartPage')
 
         boton_guardar = tk.Button(frame_botones, text ="Volver", command = regresar)
@@ -1787,7 +1812,15 @@ class PagePC(tk.Frame):
 
 
         def regresar():
+            self.controller.shared_data['rack_completo_check'].set(1)
+            boton_ult_tubo["state"] = "disabled"
+            self.controller.shared_data["last_tube"].set('E8')
+            entry_ult_tubo.configure(state='normal')
+            entry_ult_tubo.delete(0, tk.END)
+            entry_ult_tubo.insert(0, self.controller.shared_data["last_tube"].get())
+            entry_ult_tubo.configure(state='readonly')
             self.controller.show_frame('StartPage')
+
 
         boton_guardar = tk.Button(frame_botones, text ="Volver", command = regresar)
         boton_guardar.grid(row=1, column=1, padx=10, pady = 5)
