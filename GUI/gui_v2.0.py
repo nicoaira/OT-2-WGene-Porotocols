@@ -415,7 +415,7 @@ class StartPage(tk.Frame):
             popup_info = tk.Toplevel(self)
             popup_info.wm_title("Manual de instrucciones")
 
-            with open('instrucciones.txt', 'r') as file:
+            with open('instrucciones.txt', 'r', encoding = 'utf') as file:
                 manual = file.read()
 
 
