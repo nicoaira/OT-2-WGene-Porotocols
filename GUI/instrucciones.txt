@@ -3,6 +3,10 @@ Precauciones generales:
 Hay que tener en cuenta que si bien el robot opera de manera autónoma, no se lo debe dejar trabajando sin
 supervición. Es necesario que se mire atentamente el trabajo del robot, sobre todo en los primeros meses
 de uso, en los cuales se encuentra en una etapa experimental.
+Antes de comenzar cada corrida es importante chequear la pestaña calibrate (aunque se decida no calibrar
+previamente) que todo el equipamiento figure en el lugar que esperamos. Si esto no es asi probablemente 
+la configuración del protocolo no se haya cargado correctamente al servidor del Opentrons.
+
 
 
 Configuración del IP del OT-2:
@@ -16,21 +20,28 @@ guardar es importante que el robot se encuentre encendido.
 Las pipetas se deben instalar en las posiciones indicadas: p1000 lado izquierdo y p300 lado derecho.
 
 
+
 Configuración del protocolo:
 
 1 - Debemos indicar la cantidad de reactivo que tenemos que alicuotar. Los reactivos Master Mix 5X, Nuclease
 Free Water y el Positive Control están pensados para ser alicutoados desde Falcons de 50 mL, por lo que 
 debemos indicar con cuantos Falcons, asi como indicar el volumen presente en cada uno de estos.
-En el caso de dispensar Nuclease Free Water se requiere dos racks de falcon de 50ml. El rack desde donde se 
+En caso de querer indicar números con decimales, se debe utilizar el caracter punto (.), en lugar de coma (,).
+En el caso de dispensar Nuclease Free Water se requiere dos racks de Falcon de 50ml. El rack desde donde se 
 dispensa se encuentra en la posición 11 y en el caso de Nuclease Free Water en la posición 9 y 11.
 Es importante ser lo más preciso posible a la hora de indicar los volúmenes, ya que la altura de aspirado 
-del robot dependerá del volumen dentro de cada falcon. Si volumen indicado es mayor al que realmente se
+del robot dependerá del volumen dentro de cada Falcon. Si volumen indicado es mayor al que realmente se
 encuentra en el Falcon, puede que el robot intente pipetear más arriba de la superficie del líquido, 
 resultando en el aspirado de aire (¡PELIGRO!). Por otro lado, si el volumen indicado es menor al que realmente
 hay en el Falcon, puede que el tip se sumerja por demás en el líquido y que además no aprovechemos todo el
 reactivo que se encuentra en el recipiente.
 
 2 - Indicar la cantidad de racks con tubos a llenar que tenemos.
+
+2b (Solo para la RT Mix 40x) - Seleccionar el numero de tandas. Al finalizar de llenar todos los racks que 
+corresponden a una tanda, el robot se pausa a la espera de que se carguen los racks nuevos. Una vez cargados
+se debe colocar Resume en la aplicación del Opentrons. Hay que tener en cuenta que todas las tandas deben ser
+iguales (deben tener el mismo numero de racks).
 
 3 - En caso que el último de los racks no tenga todos los tubos, podemos indicar cuál es el último tubo
 presente en el rack. Los racks se van llenando columna a columna, de izquierda a derecha. Es importante
@@ -41,6 +52,19 @@ en el rack. De estar mal configurado/dispuesto, podría resultar en que se dispe
 tips columna a columna, de izquierda a derecha.
 
 5 - Guardar la configuración.
+
+6 - Cargar el protocolo en la aplicación de Opentrons. Para esto hay que seleccionar la pestaña "Protocol"
+y seleccionar el archivo protocolo-WG.py provisto junto con este programa.
+
+
+
+Calibración del Opentrons:
+
+Es importante calibrar regularmente la altura del tip y el offset de la pipeta. Para esto debemos seleccionar
+la "Pipettes" dentro de la pestaña "Robot" y seleccionar "Recalibrate pippette offset"
+Además de esto, antes de cada corrida el Opentrons nos da la opción de calibrar el labware. Esto nos asegura
+que el robot conozca con precisión la ubicación y altura a la que se enceuntra cada tubo. Lo óptimo es 
+calibrar antes de cada corrida, aunque la calibración suele permanecer aceptable por algún tiempo.
 
 
 
