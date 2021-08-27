@@ -1,6 +1,4 @@
 from opentrons import protocol_api
-import json
-import opentrons.execute
 import configparser
 import math
 import string
@@ -20,7 +18,6 @@ metadata = {
 
 config = configparser.ConfigParser()
 config.read('/data/user_storage/config.ini')
-# config.read('config.ini')
 rvo = config.get('REACTIVO', 'reactivo')
 num_racks = int(config.get('NUM_RACKS', 'num_racks'))
 num_tandas = int(config.get('NUM_TANDAS', 'num_tandas'))
@@ -51,7 +48,7 @@ if rvo == '5x' or rvo == 'pc':
     # Procesamos el diccionario para que sea mas facil correrlo
     # Pasamos el volumen de los falcons a uL
 
-    falcons_dict = {k.upper(): int(v) * 1000 for (k, v) in falcons_dict.items()}
+    falcons_dict = {k.upper(): float(v) * 1000 for (k, v) in falcons_dict.items()}
 
     falcons_list.append(falcons_dict)
 
@@ -61,12 +58,12 @@ elif rvo == 'nfw':
     falcons_list = []
 
     falcons_9 = dict(config.items('VOL_FALCONS_9'))
-    falcons_9 = {k.upper(): int(v) * 1000 for (k, v) in falcons_9.items()}
+    falcons_9 = {k.upper(): float(v) * 1000 for (k, v) in falcons_9.items()}
 
     falcons_list.append(falcons_9)
 
     falcons_11 = dict(config.items('VOL_FALCONS_11'))
-    falcons_11 = {k.upper(): int(v) * 1000 for (k, v) in falcons_11.items()}
+    falcons_11 = {k.upper(): float(v) * 1000 for (k, v) in falcons_11.items()}
 
     falcons_list.append(falcons_11)
 
@@ -94,37 +91,86 @@ elif rvo == '40x':
 
 if rvo == '5x':
     vol_pipeta = 1000
-    vol_dispensar = int(config.get('VOLUMENES_ALICUOTADO', 'vol_5x')
+    vol_dispensar = int(config.get('VOLUMENES_ALICUOTADO', 'vol_5x'))
 
 elif rvo == '40x':
     vol_pipeta = 200
-    vol_dispensar = int(config.get('VOLUMENES_ALICUOTADO', 'vol_40x')
+    vol_dispensar = int(config.get('VOLUMENES_ALICUOTADO', 'vol_40x'))
 
 elif rvo == 'nfw':
     vol_pipeta = 1000
-    vol_dispensar = int(config.get('VOLUMENES_ALICUOTADO', 'vol_nfw')
+    vol_dispensar = int(config.get('VOLUMENES_ALICUOTADO', 'vol_nfw'))
 
 elif rvo == 'pc':
     vol_pipeta = 200
-    vol_dispensar = int(config.get('VOLUMENES_ALICUOTADO', 'vol_pc')
+    vol_dispensar = int(config.get('VOLUMENES_ALICUOTADO', 'vol_pc'))
 
 
 #### Parametros geometricos de los tubos con los reactivos
 
-if rvo == '5x' or rvo == 'nfw' or rvo == 'pc':
+if rvo == 'nfw':
     vol_limite = 3750  # Vol a partir del cual toma desde la base
-    altura_base = 8
+    altura_base = 6
     altura_limite = 10
     rate_mm_mL = 1.86
     vol_muerto = vol_pipeta*1.4
+    purga = False
+    if purga:
+        vol_purga = (vol_dispensar/(vol_dispensar // vol_pipeta)) * 0.3
+        altura_purga = 0
+        velocidad_subida_purga = 100
+    else:
+        vol_purga = 0
 
+elif rvo == 'pc':
+    vol_limite = 3750  # Vol a partir del cual toma desde la base
+    altura_base = 6
+    altura_limite = 6
+    rate_mm_mL = 1.86
+    vol_muerto = vol_pipeta*1.4
+    altura_dispensado = 5
+    altura_touch = -14
+    purga = False
+    if purga:
+        vol_purga = (vol_pipeta % vol_dispensar) * 0.3
+        altura_purga = 0
+        velocidad_subida_purga = 100
+    else:
+        vol_purga = 0
+
+elif rvo == '5x':
+    vol_limite = 3750  # Vol a partir del cual toma desde la base
+    altura_base = 6
+    altura_limite = 6
+    rate_mm_mL = 1.86
+    vol_muerto = vol_pipeta*1.4
+    altura_dispensado = 10
+    altura_touch = -4
+    purga = False
+    if purga:
+        vol_purga = (vol_pipeta % vol_dispensar) * 0.3
+        altura_purga = 0
+        velocidad_subida_purga = 100
+    else:
+        vol_purga = 0
 
 elif rvo == '40x':
     vol_limite = 200 # Vol a partir del cual toma desde la base
     altura_base = 2
-    altura_limite = 12
+    altura_limite = 4
     rate_mm_mL = 7.57
     vol_muerto = vol_pipeta*1.4
+    altura_dispensado = 5
+    altura_touch = -14
+    purga = True
+    if purga:
+        vol_purga = (vol_pipeta % vol_dispensar) * 0.3
+        altura_purga = 12
+        velocidad_subida_purga = 400
+    else:
+        vol_purga = 0
+
+
 
 
 
@@ -170,6 +216,7 @@ def run(protocol: protocol_api.ProtocolContext):
         plates.append(plate_9)
         plate_11 = protocol.load_labware('opentrons_6_tuberack_falcon_50ml_conical', 11)
         plates.append(plate_11)
+
 
 
     elif rvo == '40x':
@@ -231,28 +278,24 @@ def run(protocol: protocol_api.ProtocolContext):
     pipette.pick_up_tip()
 
 
-    num_plate = -1
 
     for t in range(num_tandas):
 
 
         for i in range(num_racks):
 
+
             c = 0
 
             wells_per_rack = len(racks[i].wells())
 
-            contador = 1
 
             for index, falcon_rack in enumerate(falcons_list):
 
                 num_plate = index-1
 
-                protocol.comment('BLOQUE 1 - ' + 'RACK N ' + str(index+1))
 
                 for falcon, vol in falcon_rack.items():
-                    protocol.comment('PASO '+ str(contador) + '- ACTUALMENTE FALCON '+ falcon + ' RACK N ' + str(num_plate+1))
-                    contador += 1
 
 
                     # Se busca el primer falcon que tenga volumen
@@ -261,7 +304,6 @@ def run(protocol: protocol_api.ProtocolContext):
                         all_empty = all([True if v < vol_muerto else False for v in falcon_rack.values()])
                         if all_empty and len(plates) > 1 and num_plate < len(plates) - 1:
 
-                            protocol.comment('BLOQUE 2')
                             break
                         else:
                             continue
@@ -271,8 +313,7 @@ def run(protocol: protocol_api.ProtocolContext):
 
 
                     # Configuracion de la altura inicial del tip
-                    # Toma como punto limite el cono inferior del falcon
-                    # A partir de ahi toma desde el fondo
+                    # A partir de la altura limite toma desde el fondo
 
                     if vol > vol_limite:
                         pipette.well_bottom_clearance.aspirate = altura_base + ((vol-vol_limite)/1000) * rate_mm_mL
@@ -286,15 +327,32 @@ def run(protocol: protocol_api.ProtocolContext):
 
                         if vol_pipeta >= vol_dispensar:
 
+
                             pipette.aspirate(vol_pipeta, plates[num_plate][falcon])
 
+
+                            if purga:
+                                # Purga el 30% del remanente antes de comenzar
+                                pipette.dispense(vol_purga, plates[num_plate][falcon].bottom(pipette.well_bottom_clearance.aspirate+12))
+                                pipette.move_to(plates[num_plate][falcon].top(), speed = velocidad_subida_purga)
+                                protocol.delay(0.5)
+                            else:
+                                pipette.default_speed /= 8
+                                pipette.move_to(plates[num_plate][falcon].top(10))
+                                pipette.default_speed *= 8
 
 
                             for m in range(vol_pipeta//vol_dispensar):
 
                                 if c < wells_per_rack and vol > vol_muerto:
-                                    pipette.dispense(vol_dispensar, racks[i].wells()[c].bottom(7), rate = 0.5)
-                                    pipette.touch_tip(racks[i].wells()[c], radius = 0.60, v_offset = -15 )
+
+                                    mensaje_dispensado = 'Altura de aspirado: ' + str(round(pipette.well_bottom_clearance.aspirate, 2))
+                                    protocol.comment(mensaje_dispensado)
+                                    tubo_dispensado = 'Tubo numero: ' + str(c+1)
+                                    protocol.comment(tubo_dispensado)
+
+                                    pipette.dispense(vol_dispensar, racks[i].wells()[c].bottom(altura_dispensado), rate = 0.4)
+                                    pipette.touch_tip(racks[i].wells()[c], radius = 0.55, v_offset = altura_touch )
                                     pipette.default_speed = 80 * factor_vel_mov_ot
                                     protocol.delay(1.2)
 
@@ -311,10 +369,12 @@ def run(protocol: protocol_api.ProtocolContext):
 
                             pipette.default_speed = 300 * factor_vel_mov_ot
 
-                            pipette.dispense(vol_pipeta%vol_dispensar, plates[num_plate][falcon].bottom(pipette.well_bottom_clearance.aspirate+7), rate = 0.5)
+
+                            pipette.dispense((vol_pipeta%vol_dispensar) - vol_purga,
+                                             plates[num_plate][falcon].bottom(pipette.well_bottom_clearance.aspirate+7),
+                                             rate = 0.5)
                             protocol.delay(1.2)
                             pipette.blow_out(plates[num_plate][falcon].bottom(pipette.well_bottom_clearance.aspirate+7))
-
 
 
                             # Volumen utilizado en uL
@@ -325,7 +385,12 @@ def run(protocol: protocol_api.ProtocolContext):
                             falcon_rack[falcon] -= vol_usado
 
                             volumen_actual = 'Volumen remanente en ' + falcon + ' : '+ str(falcon_rack[falcon])
+
+
+
                             protocol.comment(volumen_actual)
+
+
 
 
 
@@ -333,7 +398,6 @@ def run(protocol: protocol_api.ProtocolContext):
 
                             pasos = math.ceil(vol_dispensar/vol_pipeta)
 
-                            protocol.comment('Altura de aspirado ' + str(pipette.well_bottom_clearance.aspirate))
 
                             for m in range(pasos):
 
@@ -344,7 +408,10 @@ def run(protocol: protocol_api.ProtocolContext):
                                 pipette.aspirate(vol_pipeta, plates[num_plate][falcon])
                                 pipette.dispense(vol_dispensar/pasos, racks[i].wells()[c].top(-4))
                                 pipette.touch_tip(racks[i].wells()[c], radius = 0.70, v_offset = -4 )
-                                pipette.dispense(vol_pipeta % (vol_dispensar / pasos), plates[num_plate][falcon].bottom(pipette.well_bottom_clearance.aspirate+15))
+                                pipette.dispense(vol_pipeta % (vol_dispensar / pasos),
+                                                 plates[num_plate][falcon].bottom(pipette.well_bottom_clearance.aspirate+15))
+
+
 
 
                             # Volumen utilizado en uL
@@ -400,6 +467,14 @@ def run(protocol: protocol_api.ProtocolContext):
                             continue
 
 
+                    if rvo == '40x' and i<num_racks-1:
+                        pipette.pipette.drop_tip()
+                        pipette.pick_up_tip()
+                    else:
+                        pass
+
+
+
 
         if num_tandas > 1:
 
@@ -408,8 +483,9 @@ def run(protocol: protocol_api.ProtocolContext):
 
                 for l in range(5):
                     protocol.set_rail_lights(False)
-                    protocol.delay(1.5)
+                    protocol.delay(.5)
                     protocol.set_rail_lights(True)
+                    protocol.delay(.5)
 
                 mensaje_tanda = 'Tanda ' + str(t+1) + '/' + str(num_tandas) + ' completada!'
                 protocol.comment(msg = mensaje_tanda)
@@ -434,11 +510,12 @@ def run(protocol: protocol_api.ProtocolContext):
 
 
 
-    # pipette.drop_tip()
-    pipette.return_tip()
+    pipette.drop_tip()
+    # pipette.return_tip()
 
     #Apaga la luz
     protocol.set_rail_lights(False)
+
 
 
 
